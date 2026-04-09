@@ -1,0 +1,96 @@
+Entities (the thing we track)
+Student entity
+
+Roll Number (Primary Key - unique ID)
+Name
+Faculty
+Course (BCA/CSIT/etc.)
+Semester (1-8)
+Section (A/B if applicable)
+Email
+Phone
+Fee Status (Pending/Paid - for admin)
+Date of Admission
+
+
+Teacher Entity:
+
+Teacher ID (Primary Key)
+Name
+Department
+Email
+Phone
+Subjects they teach (link to Subject table)
+Username (for login)
+Password (encrypted)
+
+Attendance Record Entity:
+
+Attendance ID (auto-generated)
+Student Roll Number (Foreign Key)
+Subject Code
+Date
+Status (Present/Absent/Late)
+Marked By (Teacher ID)
+Timestamp (when it was marked)
+
+Marks/Grades Entity:
+
+Marks ID
+Student Roll Number
+Student faculty
+Subject Code
+Exam Type (Internal/Final/Assignment)
+Marks Obtained
+Total Marks
+Entered By (Teacher ID)
+Entry Date
+
+Fee Record Entity:
+
+Fee ID
+Student Roll Number
+Semester
+Total Fee
+Paid Amount
+Pending Amount
+Last Payment Date
+Updated By (Admin ID)
+
+Subject Entity:
+
+Subject Code (Primary Key)
+Subject Name
+Course (BCA/CSIT)
+Semester
+Assigned Teacher (Teacher ID)
+
+1. Functional Requirements 
+for teachers: 
+FR1: System shall allow teachers to log in with username/password
+FR2: System shall allow teachers to mark attendance for their assigned classes
+FR3: System shall allow teachers to enter marks for students
+FR4: System shall allow teachers to view attendance reports
+FR5: ??? (What else should teachers be able to do?)
+system shall allow teacher to upadate question parpers for exams
+
+FR6: System shall allow admin to add/edit/delete student records
+FR7: System shall allow admin to add/edit/delete teacher records
+FR8: System shall allow admin to track student fees
+FR9: System shall allow admin to view all attendance records
+FR10: ??? (What else?) administrator should reset the passwords if any teacher forgets his/her password.
+
+2. Non-Functional Requirements:
+
+NFR1: System shall run on Windows/Linux/Mac laptops
+NFR2: System shall connect to college MySQL server via WiFi/LAN
+NFR3: System shall handle at least 500 students and 50 teachers
+NFR4: System shall have encrypted passwords
+NFR5: ??? (Performance, security, usability requirements?)
+speed dynamic and asthetic ui
+
+teacher told me that if they had a digital attendance system the attendance from laptop feature would be great instead of carrying registers. they would prefere checkbox rather  then typing a name and confirmation button edit alos if the checkmarked worng. Percantage in real time will be grate to set maks at the end of the semester or year.
+
+staff: i asked my receptionist that is it difficult to manage/search/check about studetn fee? and generting bill on paper. she said yes it's very time consuming and difficult to check every pages of register to search information about every single of studnet. since there is not any software to do these things.
+
+

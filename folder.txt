@@ -1,0 +1,10 @@
+CampusFlow/
+├── src/
+│   └── com/
+│       └── campusflow/
+│           ├── model/          ← Java classes (Student, Teacher, etc.)
+│           ├── database/       ← Database connection code
+│           ├── ui/             ← Java Swing GUI windows
+│           └── utils/          ← Helper functions (password hashing, etc.)
+├── lib/                        ← MySQL JDBC driver (we'll download this)
+└── bin/                        ← Compiled .class files

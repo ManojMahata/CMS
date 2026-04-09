@@ -1,0 +1,29 @@
+administrators -> have different ui, these can access all the data, edit data like: teacher name, classes they take. Sutend name, faculty, remaining fee.
+
+teachers -> different user interface and password provided by administrator. Can to update attendance, update marks, update results, update question parers.
+
+here is problem now, if our application is not web based then every teacher have the application in their personal laptos. now how we gonna share data from their laptop to our college server?
+
+
+1. almost every teacher carry teir laptops and phones.
+yes there is a wifi but it donesn't reaches every class but we can fix that.
+
+2. no I'll spend my 2-3 weeks learning basics html/css and spring boot beside learning java
+
+3. yes my college does have my computer which can be uesd as a servers.
+not
+
+you gave me honest advies. Now, I need to be honest with you. Right now we are just building a java project we can do something like we can build desktop based if spring boot dosen't help me to
+
+honest advice reply: I want to ask you something is spring boot goning to help to to improve my java knowledge or not? If spring boot is compleletly different then java then we need to make desktop based application for this semester and in 6th semester we can convert this desktop based application to web based application which will be helpful and work as my 6th semester project.
+
+
+Let's go with opetion A we will buil desktp based college management system and allow teachers to update attendance, marks and reports about students. Administrator to access the reports, and other thing made by teacher and administrator will take care of things like student fee, teacher attendances and other stuffs which are done in college by administrators.
+
+
+
+
+
+
+
+
