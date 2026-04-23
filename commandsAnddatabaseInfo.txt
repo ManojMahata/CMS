@@ -1,0 +1,3 @@
+about mysql connection
+mysql -u campususer -p "Campus@123"
+
