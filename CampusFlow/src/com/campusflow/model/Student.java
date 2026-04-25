@@ -58,7 +58,7 @@ public class Student{
         return faculty;
     }
 
-    public String getCouse(){
+    public String getCourse(){
         return course;
     }
 
