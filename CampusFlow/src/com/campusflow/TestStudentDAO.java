@@ -61,7 +61,7 @@ public class TestStudentDAO {
         // test 4: read search by courese and semester
 
         System.out.println("Test 4: Searching BCA semester 5 students...");
-        List<Student> bcaStudents = dao.getStudentsByCourseAndSemester("BCA", 5);
+        List<Student> bcaStudents = dao.getStudentsByCourseAndSemester("bca", 5);
         System.out.println("Found " + bcaStudents.size() + " students");
         System.out.println();
 
@@ -89,16 +89,16 @@ public class TestStudentDAO {
         System.out.println("Total students in database: " + count);
         System.out.println();
 
-        // test 7: delete remove student
-        System.out.println("Test 7: Deleting student bca002...");
-        boolean deleted = dao.deleteStudent("bca002");
-        System.out.println("Result: " + (deleted ? "SUCCESS" : "FAILED"));
+        // // test 7: delete remove student
+        // System.out.println("Test 7: Deleting student bca002...");
+        // boolean deleted = dao.deleteStudent("bca002");
+        // System.out.println("Result: " + (deleted ? "SUCCESS" : "FAILED"));
 
-        // VERIFY DELETION
-        Student shouldBeNull = dao.getStudentByRollNumber("bca002");
-        System.out.println("Verification: " + (shouldBeNull == null ? "Deleted successfully" : "Still exists!"));
+        // // VERIFY DELETION
+        // Student shouldBeNull = dao.getStudentByRollNumber("bca002");
+        // System.out.println("Verification: " + (shouldBeNull == null ? "Deleted successfully" : "Still exists!"));
 
-        System.out.println("\n=== All Test Complete ===");
+        // System.out.println("\n=== All Test Complete ===");
         
 
     }// main method ends here

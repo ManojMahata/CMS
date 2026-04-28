@@ -182,11 +182,11 @@ public class StudentDAO {
                 students.add(student);
             }
             
-            System.out.println("✅ Found " + students.size() + " students in " + 
+            System.out.println("Found " + students.size() + " students in " + 
                              course + " Semester " + semester);
             
         } catch (SQLException e) {
-            System.err.println("❌ Error searching students: " + e.getMessage());
+            System.err.println("Error searching students: " + e.getMessage());
             e.printStackTrace();
         }
         
@@ -278,14 +278,14 @@ public boolean deleteStudent(String rollNumber) {
         int rowsAffected = pstmt.executeUpdate();
         
         if (rowsAffected > 0) {
-            System.out.println("✅ Student deleted: " + rollNumber);
+            System.out.println("Student deleted: " + rollNumber);
             return true;
         } else {
-            System.out.println("⚠️ No student found with roll number: " + rollNumber);
+            System.out.println("No student found with roll number: " + rollNumber);
         }
         
     } catch (SQLException e) {
-        System.err.println("❌ Error deleting student: " + e.getMessage());
+        System.err.println("Error deleting student: " + e.getMessage());
         e.printStackTrace();
     }
     
