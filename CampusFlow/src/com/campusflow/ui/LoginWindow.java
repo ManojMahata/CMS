@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import com.campusflow.database.TeacherDAO;
+import com.campusflow.model.Teacher;
+
 /**
  * LoginWindow - First window users see
  * Allows teachers and admins to log in
@@ -118,7 +121,10 @@ public class LoginWindow extends JFrame {
 
         // add main panel to window
         add(mainPanel);
-}
+    }//initComponents method closed
+
+
+        /* 
         // mahdle login click
         private void handleLogin() {
             String username = usernameField.getText().trim();
@@ -156,6 +162,84 @@ public class LoginWindow extends JFrame {
 
 
         }// handleLogin method ends here
+
+        
+        */
+
+        private void handleLogin() {
+
+            String username = usernameField.getText().trim();
+            String passowrd = new String(passwordField.getPassword());
+            String userType = (String) userTypeCombo.getSelectedItem();
+
+            // validation 
+            if (username.isEmpty() || passowrd.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter both username and password",
+                    "Login Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            // authenticationn based on user type
+
+            if (userType.equals("Teacher")) {
+                authenticateTeacher(username, passowrd);
+            } else {
+                authenticateAdmin(username, passowrd);
+            }
+
+            // password field for security
+            passwordField.setText("");
+
+        }// handleLogin method ends here
+
+        /*
+        Authenticate teacher login
+        */
+
+        private void authenticateTeacher(String username, String password) {
+            
+            TeacherDAO dao = new TeacherDAO();
+            Teacher teacher = dao.validateLogin(username, password);
+
+            if(teacher != null) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Welcom, " + teacher.getName() + "!",
+                    "Login Successful",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+
+                // open teacher dashboard
+            System.out.println("Teacher logged in: " + teacher.getName());
+                // close login window 
+            }  else {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Invalid username or password",
+                    "Login Failed",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+            
+
+        }// authenticationTeacher class ends here
+
+        /*
+        Authenticate admin login (placeholder for now) 
+        */
+
+        private void authenticateAdmin(String username, String password) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Admin login coming soon!",
+                "Info",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        }// authenticationAdmin method ends here
 
         // main method entry point of the application
         public static void main(String[] args){
