@@ -124,7 +124,7 @@ public class LoginWindow extends JFrame {
     }//initComponents method closed
 
 
-        /* 
+        /*
         // mahdle login click
         private void handleLogin() {
             String username = usernameField.getText().trim();
@@ -163,7 +163,7 @@ public class LoginWindow extends JFrame {
 
         }// handleLogin method ends here
 
-        
+
         */
 
         private void handleLogin() {
@@ -172,7 +172,7 @@ public class LoginWindow extends JFrame {
             String passowrd = new String(passwordField.getPassword());
             String userType = (String) userTypeCombo.getSelectedItem();
 
-            // validation 
+            // validation
             if (username.isEmpty() || passowrd.isEmpty()) {
                 JOptionPane.showMessageDialog(
                     this,
@@ -201,21 +201,22 @@ public class LoginWindow extends JFrame {
         */
 
         private void authenticateTeacher(String username, String password) {
-            
+
+            System.out.println("Attemptin teacher login for: " + username);
+
             TeacherDAO dao = new TeacherDAO();
             Teacher teacher = dao.validateLogin(username, password);
 
             if(teacher != null) {
-                JOptionPane.showMessageDialog(
-                    this,
-                    "Welcom, " + teacher.getName() + "!",
-                    "Login Successful",
-                    JOptionPane.INFORMATION_MESSAGE
-                );
-
                 // open teacher dashboard
             System.out.println("Teacher logged in: " + teacher.getName());
-                // close login window 
+
+                // close login window
+                dispose();
+
+                // open teacher dashboard
+                new TeacherDashboard(teacher);
+
             }  else {
                 JOptionPane.showMessageDialog(
                     this,
@@ -224,12 +225,12 @@ public class LoginWindow extends JFrame {
                     JOptionPane.ERROR_MESSAGE
                 );
             }
-            
+
 
         }// authenticationTeacher class ends here
 
         /*
-        Authenticate admin login (placeholder for now) 
+        Authenticate admin login (placeholder for now)
         */
 
         private void authenticateAdmin(String username, String password) {
