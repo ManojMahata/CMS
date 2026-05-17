@@ -161,7 +161,8 @@ public class TeacherDashboard extends JFrame {
 
            System.out.println("Opening Attendence window...");
 
-           JOptionPane.showMessageDialog(this, "Attendence window comoing soon");
+        //    JOptionPane.showMessageDialog(this, "Attendence window comoing soon");
+        new MarkAttendanceWindow(loggedInTeacher);
 
         }// openattendancewindow method ends here
 
