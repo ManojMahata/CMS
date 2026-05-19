@@ -172,7 +172,8 @@ public class TeacherDashboard extends JFrame {
 
         private void openMarksWindow() {
             System.out.println("Opening Marks Window...");
-            JOptionPane.showMessageDialog(this, "Marks entry coming soon!");
+            
+            new EnterMarksWindow(loggedInTeacher);
         }
 
         // reprot window
