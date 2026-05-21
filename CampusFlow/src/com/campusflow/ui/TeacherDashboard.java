@@ -179,7 +179,7 @@ public class TeacherDashboard extends JFrame {
         // reprot window
         private void openReportsWindow(){
             System.out.println("Opening Report winsow...");
-            JOptionPane.showMessageDialog(this, "Report window comping soon");
+            new ViewReportsWindow(loggedInTeacher);
         }// report window method ends here
 
 

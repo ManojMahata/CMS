@@ -1,6 +1,9 @@
 package com.campusflow.database;
 
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * MarksDAO to handle marks database operations
@@ -44,6 +47,45 @@ public class MarksDAO {
     
     }// addMarks method ends here
 
-
-
+    /** 
+     * get marks by subject and exam type
+     */
+    /**
+ * Get marks bbby subject and exam type
+ */
+public List<Object[]> getMarksBySubjectAndExam(String subjectCode, String examType) {
+    List<Object[]> marksList = new ArrayList<>();
+    
+    String sql = "SELECT s.roll_number, s.name, m.marks_obtained, m.total_marks " +
+                 "FROM marks m " +
+                 "JOIN students s ON m.student_roll = s.roll_number " +
+                 "WHERE m.subject_code = ? AND m.exam_type = ? " +
+                 "ORDER BY s.roll_number";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setString(1, subjectCode);
+        pstmt.setString(2, examType);
+        ResultSet rs = pstmt.executeQuery();
+        
+        while (rs.next()) {
+            Object[] row = new Object[]{
+                rs.getString("roll_number"),
+                rs.getString("name"),
+                rs.getDouble("marks_obtained"),
+                rs.getDouble("total_marks")
+            };
+            marksList.add(row);
+        }
+        
+        System.out.println("✅ Found " + marksList.size() + " marks records");
+        
+    } catch (SQLException e) {
+        System.err.println("❌ Error fetching marks: " + e.getMessage());
+        e.printStackTrace();
+    }
+    
+    return marksList;
 }
+}// main class ends here
