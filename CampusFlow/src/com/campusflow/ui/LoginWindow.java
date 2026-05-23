@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import com.campusflow.model.Administrator;
+import com.campusflow.database.AdminDAO;
+
 import com.campusflow.database.TeacherDAO;
 import com.campusflow.model.Teacher;
 
@@ -233,14 +236,40 @@ public class LoginWindow extends JFrame {
         Authenticate admin login (placeholder for now)
         */
 
-        private void authenticateAdmin(String username, String password) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Admin login coming soon!",
-                "Info",
-                JOptionPane.INFORMATION_MESSAGE
-            );
-        }// authenticationAdmin method ends here
+        // authenticationAdmin method ends here
+
+        /**
+ * Authenticate admin login
+ */
+private void authenticateAdmin(String username, String password) {
+    System.out.println("Attempting admin login for: " + username);
+    
+    AdminDAO dao = new AdminDAO();
+    Administrator admin = dao.validateLogin(username, password);
+    
+    if (admin != null) {
+        System.out.println(" Admin logged in: " + admin.getName());
+        
+        // Close login window
+        dispose();
+        
+        // Open admin dashboard (we'll build this tonight)
+        JOptionPane.showMessageDialog(null,
+            "Welcome, " + admin.getName() + "!\n\n" +
+            "Admin Dashboard coming tonight!",
+            "Admin Login Successful",
+            JOptionPane.INFORMATION_MESSAGE);
+        
+        // TODO: Uncomment this tonight when we build AdminDashboard
+        // new AdminDashboard(admin);
+        
+    } else {
+        JOptionPane.showMessageDialog(this,
+            "Invalid admin username or password",
+            "Login Failed",
+            JOptionPane.ERROR_MESSAGE);
+    }
+}
 
         // main method entry point of the application
         public static void main(String[] args){
