@@ -248,21 +248,13 @@ private void authenticateAdmin(String username, String password) {
     Administrator admin = dao.validateLogin(username, password);
     
     if (admin != null) {
-        System.out.println(" Admin logged in: " + admin.getName());
+        System.out.println("Admin Logged in: " + admin.getName());
         
-        // Close login window
+        // dispose
         dispose();
-        
-        // Open admin dashboard (we'll build this tonight)
-        JOptionPane.showMessageDialog(null,
-            "Welcome, " + admin.getName() + "!\n\n" +
-            "Admin Dashboard coming tonight!",
-            "Admin Login Successful",
-            JOptionPane.INFORMATION_MESSAGE);
-        
-        // TODO: Uncomment this tonight when we build AdminDashboard
-        // new AdminDashboard(admin);
-        
+
+        // new admin dashboard
+        new AdminDashboard(admin);
     } else {
         JOptionPane.showMessageDialog(this,
             "Invalid admin username or password",
