@@ -17,7 +17,7 @@ public class SimpleMarksTest extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         
-        System.out.println("✅ Test window created and visible");
+        System.out.println("Test window created and visible");
     }
     
     public static void main(String[] args) {
