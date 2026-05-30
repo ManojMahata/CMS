@@ -45,6 +45,6 @@ public class SubjectDAO {
                 }
                 return subjects;
 
-    }// getSubjectsByTeacher method closed
+    }// getSubjectsByTeacherz method closed
 
 }// main class ens here

@@ -147,9 +147,7 @@ public class AdminDashboard extends JFrame {
     private void openManageStudents() {
         System.out.println("Opening Manage Students...");
         //new ManageStudentsWindow(loggedInAdmin);
-        JOptionPane.showMessageDialog(this,
-            "Manage Student coming soon!!"
-        );
+        new ManageStudentsWindow(loggedInAdmin);
     }
     
     /**

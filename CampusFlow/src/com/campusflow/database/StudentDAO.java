@@ -16,54 +16,48 @@ public class StudentDAO {
     /*to add new student to database
     @param staudent stuent object to insert
     @return true if successful, false otherwise */
-
-    public boolean addStudent(Student student) {
+    public boolean addStudent(String roll, String name, String course, int semester,
+                         String faculty, String email, String phone, String feeStatus) {
+        String sql = "INSERT INTO students (roll_number, name, course, semester, faculty, email, phone, fee_status, section, date_of_admission) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'A', CURDATE())";
         
-        String sql = "insert into students (roll_number, name, faculty, course, " + 
-        "semester, section, email, phone, fee_status, date_of_admission) " +
-        "values (?, ?, ?,  ?, ?, ?, ?, ?, ?, ?)";
-
-        try(Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            // setting parameters // palceholders
-            pstmt.setString(1, student.getRollNumber());
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(2, student.getName());
+            pstmt.setString(1, roll);
+            pstmt.setString(2, name);
+            pstmt.setString(3, course);
+            pstmt.setInt(4, semester);
+            pstmt.setString(5, faculty);
+            pstmt.setString(6, email);
+            pstmt.setString(7, phone);
+            pstmt.setString(8, feeStatus);
+            
+            int rows = pstmt.executeUpdate();
+            System.out.println("Student added: " + roll);
+            return rows > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error adding student: " + e.getMessage());
+            return false;
+        }
+    }
+    // addStudent method ends here
 
-            pstmt.setString(3, student.getFaculty());
-
-            pstmt.setString(4, student.getCourse());
-
-            pstmt.setInt(5, student.getSemester());
-
-            pstmt.setString(6, student.getSection());
-
-            pstmt.setString(7, student.getEmail());
-
-            pstmt.setString(8, student.getPhone());
-
-            pstmt.setString(9, student.getFeeStatus());
-
-            pstmt.setDate(10, Date.valueOf(student.getDateOfAdmission()));
-
-            // execute insert
-            int rowsAffected = pstmt.executeUpdate();
-
-            if(rowsAffected > 0){
-                System.out.println("Student added: " + student.getRollNumber());
-                return true;
-            }
-
-        } // try closed 
-        catch (SQLException e) {
-            System.err.println("Error adding studnet: " + e.getMessage());
-            e.printStackTrace();
-        } // catch closed
-        
-        return false;
-
-    }// addStudent method ends here
+    /**
+     * Overloaded addStudent method accepting a Student object
+     */
+    public boolean addStudent(Student student) {
+        return addStudent(
+            student.getRollNumber(),
+            student.getName(),
+            student.getCourse(),
+            student.getSemester(),
+            student.getFaculty(),
+            student.getEmail(),
+            student.getPhone(),
+            student.getFeeStatus()
+        );
+    }
 
     /*
     read get student by roll number;
@@ -115,39 +109,35 @@ public class StudentDAO {
     public List<Student> getAllStudents() {
         List<Student> students = new ArrayList<>();
         String sql = "select * from students order by roll_number";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                students.add(new Student(
+                    rs.getString("roll_number"),
+                    rs.getString("name"),
+                    rs.getString("faculty"),
+                    rs.getString("course"),
+                    rs.getInt("semester"),
+                    rs.getString("section"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getString("fee_status"),
+                    rs.getDate("date_of_admission") != null ? rs.getDate("date_of_admission").toLocalDate() : null
+                ));
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error fetching students: " + e.getMessage());
+        }
+        
+        return students;
+    }
 
-        try (Connection conn = DatabaseConnection.getConnection(); 
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)) {
 
-                while (rs.next()) {
-                    Student student = new Student(
-
-                        rs.getString("roll_number"),
-                        rs.getString("name"),
-                        rs.getString("faculty"),
-                        rs.getString("course"),
-                        rs.getInt("semester"),
-                        rs.getString("section"),
-                        rs.getString("email"),
-                        rs.getString("phone"),
-                        rs.getString("fee_status"),
-                        rs.getDate("date_of_admission").toLocalDate()
-
-                    );
-                    students.add(student);
-                }
-                System.out.println("Retrieved " + students.size() + " students");
-
-            } catch (SQLException e) {
-                System.err.println("Error fetching all students: " + e.getMessage());
-
-                e.printStackTrace();
-            } 
-
-            return students;
-
-    }// List<Student> getAllStudent method closed her
+    // List<Student> getAllStudent method closed her
 
     /**
      * READ - Get students by course and semester
@@ -197,49 +187,36 @@ public class StudentDAO {
     update - modifying existing student record
     @param student Student object updated data 
     @return true if successful, false otherwise*/
-
-    public boolean updateStudent(Student student) {
-        String sql = "update students set name = ?, faculty = ?, course = ?, " + "semester = ?, section = ?, email = ?, phone = ?, " + "fee_status = ? where roll_number = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-                pstmt.setString(1, student.getName());
-                
-                pstmt.setString(2, student.getFaculty());
-
-                pstmt.setString(3, student.getCourse());
-
-                pstmt.setInt(4, student.getSemester());
-
-                pstmt.setString(5, student.getSection());
-
-                pstmt.setString(6, student.getEmail());
-
-                pstmt.setString(7, student.getPhone());
-
-                pstmt.setString(8, student.getFeeStatus());
-
-                pstmt.setString(9, student.getRollNumber());
-
-                int rowsAffected = pstmt.executeUpdate();
-
-                if ( rowsAffected > 0 ) {
-                    System.out.println("Student update :" + student.getRollNumber());
-                    return true;
-                } else {
-                    System.out.println("No student found wiht roll number.");
-                } // if else ends here
-
-        } // tyr ends here
-        catch (SQLException e) {
-            System.err.println("Error updating student: " + e.getMessage());
-            e.printStackTrace();
-        }
-
+    /**
+ * Update student
+ */
+public boolean updateStudent(String roll, String name, String course, int semester,
+                            String faculty, String email, String phone, String feeStatus) {
+    String sql = "UPDATE students SET name=?, course=?, semester=?, faculty=?, " +
+                 "email=?, phone=?, fee_status=? WHERE roll_number=?";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setString(1, name);
+        pstmt.setString(2, course);
+        pstmt.setInt(3, semester);
+        pstmt.setString(4, faculty);
+        pstmt.setString(5, email);
+        pstmt.setString(6, phone);
+        pstmt.setString(7, feeStatus);
+        pstmt.setString(8, roll);
+        
+        int rows = pstmt.executeUpdate();
+        System.out.println("Student updated: " + roll);
+        return rows > 0;
+        
+    } catch (SQLException e) {
+        System.err.println("Error updating student: " + e.getMessage());
         return false;
-
-    }// updateStudent method ended
+    }
+}
+    // updateStudent method ended
 
     /*
     method to get total number of students */
@@ -264,9 +241,12 @@ public class StudentDAO {
     }// getStudentCount method ends here
     
     /**
- * DELETE - Remove student from database
- * @param rollNumber Roll number of student to delete
- * @return true if successful, false otherwise
+     * DELETE - Remove student from database
+     * @param rollNumber Roll number of student to delete
+     * @return true if successful, false otherwise
+     */
+    /**
+ * Delete student
  */
 public boolean deleteStudent(String rollNumber) {
     String sql = "DELETE FROM students WHERE roll_number = ?";
@@ -275,21 +255,74 @@ public boolean deleteStudent(String rollNumber) {
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
         
         pstmt.setString(1, rollNumber);
-        int rowsAffected = pstmt.executeUpdate();
-        
-        if (rowsAffected > 0) {
-            System.out.println("Student deleted: " + rollNumber);
-            return true;
-        } else {
-            System.out.println("No student found with roll number: " + rollNumber);
-        }
+        int rows = pstmt.executeUpdate();
+        System.out.println("Student deleted: " + rollNumber);
+        return rows > 0;
         
     } catch (SQLException e) {
         System.err.println("Error deleting student: " + e.getMessage());
-        e.printStackTrace();
+        return false;
     }
-    
-    return false;
 }
+    // deleteStudent method ends here
+
+    
+    /**
+     * Search students by roll/name
+     */
+    public List<Student> searchStudents(String query) {
+        List<Student> students = new ArrayList<>();
+        String sql = "SELECT * FROM students WHERE " +
+                     "roll_number LIKE ? OR name LIKE ? " +
+                     "ORDER BY roll_number";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            String searchPattern = "%" + query + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+            
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                students.add(new Student(
+                    rs.getString("roll_number"),
+                    rs.getString("name"),
+                    rs.getString("faculty"),
+                    rs.getString("course"),
+                    rs.getInt("semester"),
+                    rs.getString("section"),
+                    rs.getString("email"),
+                    rs.getString("phone"),
+                    rs.getString("fee_status"),
+                    rs.getDate("date_of_admission") != null ? rs.getDate("date_of_admission").toLocalDate() : null
+                ));
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error searching students: " + e.getMessage());
+        }
+        
+        return students;    
+    } // searchStudents method ends here
+
+    /**
+     * Overloaded updateStudent method accepting a Student object
+     */
+    public boolean updateStudent(Student student) {
+        return updateStudent(
+            student.getRollNumber(),
+            student.getName(),
+            student.getCourse(),
+            student.getSemester(),
+            student.getFaculty(),
+            student.getEmail(),
+            student.getPhone(),
+            student.getFeeStatus()
+        );
+    }
+
+
 
 }// main class closed

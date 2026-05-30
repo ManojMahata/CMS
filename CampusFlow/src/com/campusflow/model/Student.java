@@ -34,14 +34,14 @@ public class Student{
     }// constructor -full ends here
 
 
-    public Student(String rollNumber, String name, String course, int semester){
+    public Student(String rollNumber, String name, String course, int semester, String string, String string2, String string3, String string4, Object object){
 
         this.rollNumber = rollNumber;
         this.name = name;
         this.course = course;
         this.semester = semester;
         this.feeStatus = "Pending";//default value updated by administration
-            this.dateOfAdmission = LocalDate.now(); // todays' date
+        this.dateOfAdmission = LocalDate.now(); // todays' date
     }// minimal constructor ends here (this will used while creating new student)
 
 
@@ -98,7 +98,7 @@ public class Student{
         this.faculty = faculty;
     }
 
-    public void setSememster(int semester){
+    public void setSemester(int semester){
         this.semester = semester;
     }
 

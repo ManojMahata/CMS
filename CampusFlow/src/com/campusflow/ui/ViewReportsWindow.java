@@ -43,9 +43,9 @@ public class ViewReportsWindow extends JFrame {
         tabbedPane.setFont(new Font("Arial", Font.PLAIN, 14));
         
         // Add tabs
-        tabbedPane.addTab("📊 Attendance Report", createAttendanceReportPanel());
-        tabbedPane.addTab("📝 Marks Report", createMarksReportPanel());
-        tabbedPane.addTab("🔍 Student Search", createStudentSearchPanel());
+        tabbedPane.addTab("Attendance Report", createAttendanceReportPanel());
+        tabbedPane.addTab("Marks Report", createMarksReportPanel());
+        tabbedPane.addTab("Student Search", createStudentSearchPanel());
         
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
         
@@ -106,13 +106,13 @@ public class ViewReportsWindow extends JFrame {
                 
                 if (!isSelected) {
                     String status = value.toString();
-                    if (status.equals("✅ Good")) {
+                    if (status.equals("Good")) {
                         c.setBackground(new Color(220, 255, 220));
                         c.setForeground(new Color(0, 128, 0));
-                    } else if (status.equals("⚠️ Low")) {
+                    } else if (status.equals("Low")) {
                         c.setBackground(new Color(255, 240, 200));
                         c.setForeground(new Color(200, 100, 0));
-                    } else if (status.equals("❌ Critical")) {
+                    } else if (status.equals("Critical")) {
                         c.setBackground(new Color(255, 220, 220));
                         c.setForeground(new Color(200, 0, 0));
                     } else {
@@ -156,11 +156,11 @@ public class ViewReportsWindow extends JFrame {
                 
                 String status;
                 if (percentage >= 75) {
-                    status = "✅ Good";
+                    status = "Good";
                 } else if (percentage >= 60) {
-                    status = "⚠️ Low";
+                    status = "Low";
                 } else {
-                    status = "❌ Critical";
+                    status = "Critical";
                 }
                 
                 tableModel.addRow(new Object[]{
@@ -303,7 +303,7 @@ public class ViewReportsWindow extends JFrame {
             Student student = studentDAO.getStudentByRollNumber(rollNumber);
             
             if (student == null) {
-                resultArea.setText("❌ Student not found: " + rollNumber);
+                resultArea.setText("Student not found: " + rollNumber);
                 return;
             }
             

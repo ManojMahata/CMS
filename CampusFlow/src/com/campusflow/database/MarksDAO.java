@@ -79,10 +79,10 @@ public List<Object[]> getMarksBySubjectAndExam(String subjectCode, String examTy
             marksList.add(row);
         }
         
-        System.out.println("✅ Found " + marksList.size() + " marks records");
+        System.out.println("Found " + marksList.size() + " marks records");
         
     } catch (SQLException e) {
-        System.err.println("❌ Error fetching marks: " + e.getMessage());
+        System.err.println("Error fetching marks: " + e.getMessage());
         e.printStackTrace();
     }
     

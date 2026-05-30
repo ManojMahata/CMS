@@ -58,12 +58,12 @@ public class TeacherDashboard extends JFrame {
         headerPanel.setBackground(new Color(41, 128, 185));
         headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel welcomeLabel = new JLabel("Welcom, " + loggedInTeacher.getName() + "!");
+        JLabel welcomeLabel = new JLabel("Welcome, " + loggedInTeacher.getName() + "!");
         welcomeLabel.setFont(new Font("Arial", Font.PLAIN, 24));
         welcomeLabel.setForeground(Color.WHITE);
 
         JLabel infoLabel = new JLabel(loggedInTeacher.getDepartment());
-        infoLabel.setFont(new Font("Arail", Font.BOLD, 24));
+        infoLabel.setFont(new Font("Arial", Font.BOLD, 24));
         infoLabel.setForeground(Color.WHITE);
 
         JPanel headerTextPanel = new JPanel();
@@ -82,10 +82,10 @@ public class TeacherDashboard extends JFrame {
         buttonsPanel.setBackground(new Color(240, 240, 240));
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
 
-        // Mark Attendence Button
-        JButton attendenceBth = createDashboardButton("Mark Attendence", new Color(46, 204, 113));
-        attendenceBth.addActionListener(e -> openAttendanceWindow());
-        buttonsPanel.add(attendenceBth);
+        // Mark Attendance Button
+        JButton attendanceBtn = createDashboardButton("Mark Attendance", new Color(46, 204, 113));
+        attendanceBtn.addActionListener(e -> openAttendanceWindow());
+        buttonsPanel.add(attendanceBtn);
 
         // Enter Marks button
         JButton marksBtn = createDashboardButton ("Enter Marks", new Color(52, 152, 219));

@@ -31,7 +31,7 @@ public class AttendanceDAO {
             int rowsAffected = pstmt.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("✅ Attendance marked: " + record.getStudentRoll());
+                System.out.println("Attendance marked: " + record.getStudentRoll());
                 return true;
             }
             
@@ -42,7 +42,7 @@ public class AttendanceDAO {
                                  record.getStudentRoll() + " on " + record.getAttendanceDate());
                 return false;
             }
-            System.err.println("❌ Error marking attendance: " + e.getMessage());
+            System.err.println("Error marking attendance: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -70,7 +70,7 @@ public class AttendanceDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error checking attendance: " + e.getMessage());
+            System.err.println("Error checking attendance: " + e.getMessage());
             e.printStackTrace();
         }
         
@@ -91,11 +91,11 @@ public class AttendanceDAO {
             pstmt.setDate(2, Date.valueOf(date));
             int rowsAffected = pstmt.executeUpdate();
             
-            System.out.println("✅ Deleted " + rowsAffected + " attendance records");
+            System.out.println("Deleted " + rowsAffected + " attendance records");
             return rowsAffected > 0;
             
         } catch (SQLException e) {
-            System.err.println("❌ Error deleting attendance: " + e.getMessage());
+            System.err.println("Error deleting attendance: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -108,7 +108,7 @@ public class AttendanceDAO {
         String sql = "SELECT " +
                      "COUNT(*) as total, " +
                      "SUM(CASE WHEN status = 'Present' THEN 1 ELSE 0 END) as present " +
-                     "FROM attendance_records " +  // ✅ PLURAL: attendance_records
+                     "FROM attendance_records " +  //PLURAL: attendance_records
                      "WHERE student_roll = ? AND subject_code = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -127,7 +127,7 @@ public class AttendanceDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error calculating percentage: " + e.getMessage());
+            System.err.println("Error calculating percentage: " + e.getMessage());
             e.printStackTrace();
         }
         
@@ -158,7 +158,7 @@ public class AttendanceDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error getting stats: " + e.getMessage());
+            System.err.println("Error getting stats: " + e.getMessage());
             e.printStackTrace();
         }
         
