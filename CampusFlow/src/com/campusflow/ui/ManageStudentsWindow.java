@@ -55,40 +55,82 @@ public class ManageStudentsWindow extends JFrame {
     }
 
     /**
-     * Create top panel with search and add button
-     */
-    private JPanel createTopPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-
-        // Search panel
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(new JLabel("Search:"));
-
-        searchField = new JTextField(20);
-        searchPanel.add(searchField);
-
-        JButton searchBtn = new JButton("Search");
-        searchBtn.addActionListener(e -> searchStudents());
-        searchPanel.add(searchBtn);
-
-        JButton refreshBtn = new JButton("Refresh");
-        refreshBtn.addActionListener(e -> loadStudents());
-        searchPanel.add(refreshBtn);
-
-        panel.add(searchPanel, BorderLayout.WEST);
-
-        // Add button
-        JButton addBtn = new JButton("Add New Student");
-        addBtn.setBackground(new Color(46, 204, 113));
-        addBtn.setForeground(Color.WHITE);
-        addBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        addBtn.addActionListener(e -> showAddStudentDialog());
-
-        JPanel addPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        addPanel.add(addBtn);
-        panel.add(addPanel, BorderLayout.EAST);
-
-        return panel;
+    *panel with semester, search and add button
+    */
+private JPanel createTopPanel() {
+    JPanel panel = new JPanel(new BorderLayout(10, 10));
+    
+    // Semester selector
+    JPanel semesterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    semesterPanel.add(new JLabel("Select Semester:"));
+    
+    JComboBox<Integer> semesterCombo = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8});
+    semesterCombo.setSelectedItem(5);  // Default to semester 5
+    semesterPanel.add(semesterCombo);
+    
+    JButton loadBtn = new JButton("Load Students");
+    loadBtn.addActionListener(e -> {
+        int semester = (Integer) semesterCombo.getSelectedItem();
+        loadStudentsBySemester(semester);
+    });
+    semesterPanel.add(loadBtn);
+    
+    panel.add(semesterPanel, BorderLayout.WEST);
+    
+    // Search panel
+    JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    searchPanel.add(new JLabel("Search:"));
+    
+    searchField = new JTextField(20);
+    searchPanel.add(searchField);
+    
+    JButton searchBtn = new JButton("Search");
+    searchBtn.addActionListener(e -> searchStudents());
+    searchPanel.add(searchBtn);
+    
+    JButton refreshBtn = new JButton("Refresh");
+    refreshBtn.addActionListener(e -> loadStudents());
+    searchPanel.add(refreshBtn);
+    
+    panel.add(searchPanel, BorderLayout.CENTER);
+    
+    // Add button
+    JButton addBtn = new JButton("Add New Student");
+    addBtn.setBackground(new Color(46, 204, 113));
+    addBtn.setForeground(Color.WHITE);
+    addBtn.setFont(new Font("Arial", Font.BOLD, 14));
+    addBtn.addActionListener(e -> showAddStudentDialog());
+    
+    JPanel addPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    addPanel.add(addBtn);
+    panel.add(addPanel, BorderLayout.EAST);
+    
+    return panel;
+    }
+    
+    /**
+    * Load students by semester
+    */
+    private void loadStudentsBySemester(int semester) {
+    tableModel.setRowCount(0);
+    
+    StudentDAO dao = new StudentDAO();
+    List<Student> students = dao.getStudentsBySemester(semester);
+    
+    for (Student s : students) {
+        tableModel.addRow(new Object[]{
+            s.getRollNumber(),
+            s.getName(),
+            s.getCourse(),
+            s.getSemester(),
+            s.getFaculty(),
+            s.getEmail(),
+            s.getPhone(),
+            s.getFeeStatus()
+        });
+    }
+    
+    System.out.println("✅ Loaded " + students.size() + " students from semester " + semester);
     }
 
     /**

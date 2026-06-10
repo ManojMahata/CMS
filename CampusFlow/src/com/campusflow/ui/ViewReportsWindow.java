@@ -60,206 +60,250 @@ public class ViewReportsWindow extends JFrame {
     }
     
     /**
-     * Create attendance report panel
-     */
-    private JPanel createAttendanceReportPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
-        // Top panel - subject selector
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        topPanel.add(new JLabel("Select Subject:"));
-        
-        SubjectDAO subjectDAO = new SubjectDAO();
-        List<Subject> subjects = subjectDAO.getSubjectsByTeacher(loggedInTeacher.getTeacherId());
-        
-        JComboBox<Subject> subjectCombo = new JComboBox<>();
-        for (Subject s : subjects) {
-            subjectCombo.addItem(s);
+ * Create attendance report panel
+ */
+private JPanel createAttendanceReportPanel() {
+    JPanel panel = new JPanel(new BorderLayout(10, 10));
+    panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    
+    // Top panel - semester and subject selector
+    JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    
+    topPanel.add(new JLabel("Select Semester:"));
+    JComboBox<Integer> semesterCombo = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8});
+    semesterCombo.setSelectedItem(5);
+    topPanel.add(semesterCombo);
+    
+    topPanel.add(new JLabel("Select Subject:"));
+    
+    SubjectDAO subjectDAO = new SubjectDAO();
+    JComboBox<Subject> subjectCombo = new JComboBox<>();
+    topPanel.add(subjectCombo);
+    
+    JButton loadBtn = new JButton("Load Report");
+    topPanel.add(loadBtn);
+    
+    panel.add(topPanel, BorderLayout.NORTH);
+    
+    // Center - table
+    String[] columns = {"Roll No", "Student Name", "Total Classes", "Present", "Absent", "Percentage", "Status"};
+    DefaultTableModel tableModel = new DefaultTableModel(columns, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
         }
-        topPanel.add(subjectCombo);
-        
-        JButton loadBtn = new JButton("Load Report");
-        topPanel.add(loadBtn);
-        
-        panel.add(topPanel, BorderLayout.NORTH);
-        
-        // Center - table
-        String[] columns = {"Roll No", "Student Name", "Total Classes", "Present", "Absent", "Percentage", "Status"};
-        DefaultTableModel tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        
-        JTable table = new JTable(tableModel);
-        table.setFont(new Font("Arial", Font.PLAIN, 13));
-        table.setRowHeight(25);
-        
-        // Color renderer for status
-        table.getColumnModel().getColumn(6).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                
-                if (!isSelected) {
-                    String status = value.toString();
-                    if (status.equals("Good")) {
-                        c.setBackground(new Color(220, 255, 220));
-                        c.setForeground(new Color(0, 128, 0));
-                    } else if (status.equals("Low")) {
-                        c.setBackground(new Color(255, 240, 200));
-                        c.setForeground(new Color(200, 100, 0));
-                    } else if (status.equals("Critical")) {
-                        c.setBackground(new Color(255, 220, 220));
-                        c.setForeground(new Color(200, 0, 0));
-                    } else {
-                        c.setBackground(Color.WHITE);
-                        c.setForeground(Color.BLACK);
-                    }
+    };
+    
+    JTable table = new JTable(tableModel);
+    table.setFont(new Font("Arial", Font.PLAIN, 13));
+    table.setRowHeight(25);
+    
+    // Color renderer for status
+    table.getColumnModel().getColumn(6).setCellRenderer(new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            
+            if (!isSelected) {
+                String status = value.toString();
+                if (status.equals("Good")) {
+                    c.setBackground(new Color(220, 255, 220));
+                    c.setForeground(new Color(0, 128, 0));
+                } else if (status.equals("Low")) {
+                    c.setBackground(new Color(255, 240, 200));
+                    c.setForeground(new Color(200, 100, 0));
+                } else if (status.equals("Critical")) {
+                    c.setBackground(new Color(255, 220, 220));
+                    c.setForeground(new Color(200, 0, 0));
+                } else {
+                    c.setBackground(Color.WHITE);
+                    c.setForeground(Color.BLACK);
                 }
-                
-                return c;
             }
-        });
-        
-        JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane, BorderLayout.CENTER);
-        
-        // Load button action
-        loadBtn.addActionListener(e -> {
-            Subject selectedSubject = (Subject) subjectCombo.getSelectedItem();
-            if (selectedSubject == null) return;
             
-            tableModel.setRowCount(0);
-            
-            StudentDAO studentDAO = new StudentDAO();
-            List<Student> students = studentDAO.getStudentsByCourseAndSemester(
-                selectedSubject.getCourse(),
-                selectedSubject.getSemester()
+            return c;
+        }
+    });
+    
+    JScrollPane scrollPane = new JScrollPane(table);
+    panel.add(scrollPane, BorderLayout.CENTER);
+    
+    // Load button action
+    loadBtn.addActionListener(e -> {
+        int semester = (Integer) semesterCombo.getSelectedItem();
+        Subject selectedSubject = (Subject) subjectCombo.getSelectedItem();
+        
+        if (selectedSubject == null) return;
+        
+        tableModel.setRowCount(0);
+        
+        StudentDAO studentDAO = new StudentDAO();
+        List<Student> students = studentDAO.getStudentsBySemester(semester);
+        
+        AttendanceDAO attendanceDAO = new AttendanceDAO();
+        
+        for (Student student : students) {
+            int[] stats = attendanceDAO.getAttendanceStats(
+                student.getRollNumber(),
+                selectedSubject.getSubjectCode()
             );
             
-            AttendanceDAO attendanceDAO = new AttendanceDAO();
+            int present = stats[0];
+            int total = stats[1];
+            int absent = total - present;
+            double percentage = total > 0 ? (present * 100.0 / total) : 0.0;
             
-            for (Student student : students) {
-                int[] stats = attendanceDAO.getAttendanceStats(
-                    student.getRollNumber(),
-                    selectedSubject.getSubjectCode()
-                );
-                
-                int present = stats[0];
-                int total = stats[1];
-                int absent = total - present;
-                double percentage = total > 0 ? (present * 100.0 / total) : 0.0;
-                
-                String status;
-                if (percentage >= 75) {
-                    status = "Good";
-                } else if (percentage >= 60) {
-                    status = "Low";
-                } else {
-                    status = "Critical";
-                }
-                
-                tableModel.addRow(new Object[]{
-                    student.getRollNumber(),
-                    student.getName(),
-                    total,
-                    present,
-                    absent,
-                    String.format("%.1f%%", percentage),
-                    status
-                });
+            String status;
+            if (percentage >= 75) {
+                status = "Good";
+            } else if (percentage >= 60) {
+                status = "Low";
+            } else {
+                status = "Critical";
             }
-        });
+            
+            tableModel.addRow(new Object[]{
+                student.getRollNumber(),
+                student.getName(),
+                total,
+                present,
+                absent,
+                String.format("%.1f%%", percentage),
+                status
+            });
+        }
+    });
+    
+    // When semester changes, load subjects for that semester
+    semesterCombo.addActionListener(e -> {
+        int semester = (Integer) semesterCombo.getSelectedItem();
+        subjectCombo.removeAllItems();
         
-        return panel;
+        List<Subject> subjects = subjectDAO.getSubjectsByTeacher(loggedInTeacher.getTeacherId());
+        for (Subject s : subjects) {
+            if (s.getSemester() == semester) {
+                subjectCombo.addItem(s);
+            }
+        }
+    });
+    
+    // Load initial subjects
+    semesterCombo.setSelectedItem(5);
+    List<Subject> initialSubjects = subjectDAO.getSubjectsByTeacher(loggedInTeacher.getTeacherId());
+    for (Subject s : initialSubjects) {
+        if (s.getSemester() == 5) {
+            subjectCombo.addItem(s);
+        }
     }
     
+    return panel;
+}
+    
     /**
-     * Create marks report panel
-     */
-    private JPanel createMarksReportPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+ * Create marks report panel
+ */
+private JPanel createMarksReportPanel() {
+    JPanel panel = new JPanel(new BorderLayout(10, 10));
+    panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    
+    // Top panel - filters
+    JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    
+    topPanel.add(new JLabel("Semester:"));
+    JComboBox<Integer> semesterCombo = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8});
+    semesterCombo.setSelectedItem(5);
+    topPanel.add(semesterCombo);
+    
+    topPanel.add(new JLabel("Subject:"));
+    SubjectDAO subjectDAO = new SubjectDAO();
+    JComboBox<Subject> subjectCombo = new JComboBox<>();
+    topPanel.add(subjectCombo);
+    
+    topPanel.add(new JLabel("Exam:"));
+    JComboBox<String> examCombo = new JComboBox<>(new String[]{"Internal", "Final", "Assignment"});
+    topPanel.add(examCombo);
+    
+    JButton loadBtn = new JButton("Load Marks");
+    topPanel.add(loadBtn);
+    
+    panel.add(topPanel, BorderLayout.NORTH);
+    
+    // Center - table
+    String[] columns = {"Roll No", "Student Name", "Marks Obtained", "Total Marks", "Percentage", "Grade"};
+    DefaultTableModel tableModel = new DefaultTableModel(columns, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+    
+    JTable table = new JTable(tableModel);
+    table.setFont(new Font("Arial", Font.PLAIN, 13));
+    table.setRowHeight(25);
+    
+    JScrollPane scrollPane = new JScrollPane(table);
+    panel.add(scrollPane, BorderLayout.CENTER);
+    
+    // Load button action
+    loadBtn.addActionListener(e -> {
+        Subject selectedSubject = (Subject) subjectCombo.getSelectedItem();
+        String examType = (String) examCombo.getSelectedItem();
         
-        // Top panel - filters
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        if (selectedSubject == null) return;
         
-        topPanel.add(new JLabel("Subject:"));
-        SubjectDAO subjectDAO = new SubjectDAO();
+        tableModel.setRowCount(0);
+        
+        MarksDAO marksDAO = new MarksDAO();
+        List<Object[]> marksList = marksDAO.getMarksBySubjectAndExam(
+            selectedSubject.getSubjectCode(),
+            examType
+        );
+        
+        for (Object[] row : marksList) {
+            String rollNo = (String) row[0];
+            String name = (String) row[1];
+            double obtained = (Double) row[2];
+            double total = (Double) row[3];
+            
+            double percentage = (obtained / total) * 100;
+            String grade = getGrade(percentage);
+            
+            tableModel.addRow(new Object[]{
+                rollNo,
+                name,
+                obtained,
+                total,
+                String.format("%.1f%%", percentage),
+                grade
+            });
+        }
+    });
+    
+    // When semester changes, load subjects for that semester
+    semesterCombo.addActionListener(e -> {
+        int semester = (Integer) semesterCombo.getSelectedItem();
+        subjectCombo.removeAllItems();
+        
         List<Subject> subjects = subjectDAO.getSubjectsByTeacher(loggedInTeacher.getTeacherId());
-        
-        JComboBox<Subject> subjectCombo = new JComboBox<>();
         for (Subject s : subjects) {
+            if (s.getSemester() == semester) {
+                subjectCombo.addItem(s);
+            }
+        }
+    });
+    
+    // Load initial subjects
+    semesterCombo.setSelectedItem(5);
+    List<Subject> initialSubjects = subjectDAO.getSubjectsByTeacher(loggedInTeacher.getTeacherId());
+    for (Subject s : initialSubjects) {
+        if (s.getSemester() == 5) {
             subjectCombo.addItem(s);
         }
-        topPanel.add(subjectCombo);
-        
-        topPanel.add(new JLabel("Exam:"));
-        JComboBox<String> examCombo = new JComboBox<>(new String[]{"Internal", "Final", "Assignment"});
-        topPanel.add(examCombo);
-        
-        JButton loadBtn = new JButton("Load Marks");
-        topPanel.add(loadBtn);
-        
-        panel.add(topPanel, BorderLayout.NORTH);
-        
-        // Center - table
-        String[] columns = {"Roll No", "Student Name", "Marks Obtained", "Total Marks", "Percentage", "Grade"};
-        DefaultTableModel tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        
-        JTable table = new JTable(tableModel);
-        table.setFont(new Font("Arial", Font.PLAIN, 13));
-        table.setRowHeight(25);
-        
-        JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane, BorderLayout.CENTER);
-        
-        // Load button action
-        loadBtn.addActionListener(e -> {
-            Subject selectedSubject = (Subject) subjectCombo.getSelectedItem();
-            String examType = (String) examCombo.getSelectedItem();
-            
-            if (selectedSubject == null) return;
-            
-            tableModel.setRowCount(0);
-            
-            MarksDAO marksDAO = new MarksDAO();
-            List<Object[]> marksList = marksDAO.getMarksBySubjectAndExam(
-                selectedSubject.getSubjectCode(),
-                examType
-            );
-            
-            for (Object[] row : marksList) {
-                String rollNo = (String) row[0];
-                String name = (String) row[1];
-                double obtained = (Double) row[2];
-                double total = (Double) row[3];
-                
-                double percentage = (obtained / total) * 100;
-                String grade = getGrade(percentage);
-                
-                tableModel.addRow(new Object[]{
-                    rollNo,
-                    name,
-                    obtained,
-                    total,
-                    String.format("%.1f%%", percentage),
-                    grade
-                });
-            }
-        });
-        
-        return panel;
     }
+    
+    return panel;
+}
     
     /**
      * Create student search panel
@@ -308,9 +352,9 @@ public class ViewReportsWindow extends JFrame {
             }
             
             StringBuilder report = new StringBuilder();
-            report.append("═══════════════════════════════════════\n");
+            report.append("\n");
             report.append("       STUDENT PERFORMANCE REPORT\n");
-            report.append("═══════════════════════════════════════\n\n");
+            report.append("\n");
             
             report.append("Roll Number: ").append(student.getRollNumber()).append("\n");
             report.append("Name: ").append(student.getName()).append("\n");
@@ -318,9 +362,9 @@ public class ViewReportsWindow extends JFrame {
             report.append("Faculty: ").append(student.getFaculty()).append("\n");
             report.append("Fee Status: ").append(student.getFeeStatus()).append("\n\n");
             
-            report.append("───────────────────────────────────────\n");
+            report.append("\n");
             report.append("ATTENDANCE SUMMARY\n");
-            report.append("───────────────────────────────────────\n\n");
+            report.append("\n\n");
             
             SubjectDAO subjectDAO = new SubjectDAO();
             List<Subject> subjects = subjectDAO.getSubjectsByTeacher(loggedInTeacher.getTeacherId());

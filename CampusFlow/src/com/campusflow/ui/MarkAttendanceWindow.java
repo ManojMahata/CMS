@@ -92,6 +92,63 @@ public class MarkAttendanceWindow extends JFrame {
             dispose();
         }
     }
+
+    /**
+ * Load subjects and students by semester
+ */
+private void loadSubjectsAndStudentsBySemester(int semester) {
+    // Load subjects for the selected semester that this teacher teaches
+    SubjectDAO subjectDAO = new SubjectDAO();
+    teacherSubjects = new ArrayList<>();
+    
+    for (Subject s : subjectDAO.getSubjectsByTeacher(loggedInTeacher.getTeacherId())) {
+        if (s.getSemester() == semester) {
+            teacherSubjects.add(s);
+        }
+    }
+    
+    // Update subjects checkboxes
+    subjectsPanel.removeAll();
+    subjectCheckboxes.clear();
+    
+    for (Subject subject : teacherSubjects) {
+        JCheckBox cb = new JCheckBox(subject.toString());
+        cb.setFont(new Font("Arial", Font.PLAIN, 14));
+        subjectCheckboxes.add(cb);
+        subjectsPanel.add(cb);
+        subjectsPanel.add(Box.createVerticalStrut(5));
+    }
+    subjectsPanel.revalidate();
+    subjectsPanel.repaint();
+    
+    // Load students for this semester
+    StudentDAO studentDAO = new StudentDAO();
+    students = studentDAO.getStudentsBySemester(semester);
+    
+    // Update students checkboxes
+    studentsPanel.removeAll();
+    studentCheckboxes.clear();
+    
+    for (Student student : students) {
+        JCheckBox cb = new JCheckBox(
+            student.getRollNumber() + " - " + student.getName()
+        );
+        cb.setFont(new Font("Arial", Font.PLAIN, 14));
+        cb.setSelected(true);
+        cb.addActionListener(e -> updateSummary());
+        
+        studentCheckboxes.add(cb);
+        studentsPanel.add(cb);
+        studentsPanel.add(Box.createVerticalStrut(5));
+    }
+    studentsPanel.revalidate();
+    studentsPanel.repaint();
+    
+    updateSummary();
+    
+    System.out.println("Loaded " + teacherSubjects.size() + " subjects and " + 
+                       students.size() + " students for semester " + semester);
+}
     
     /**
      * Initialize UI components
@@ -103,6 +160,9 @@ public class MarkAttendanceWindow extends JFrame {
         
         // Header
         mainPanel.add(createHeaderPanel(), BorderLayout.NORTH);
+        
+        // Top - Semester selector
+        mainPanel.add(createSemesterPanel(), BorderLayout.PAGE_START);
         
         // Center - split into subjects and students
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -116,6 +176,30 @@ public class MarkAttendanceWindow extends JFrame {
         
         add(mainPanel);
     }
+
+    /**
+     * Create semester selector panel
+     */
+    private JPanel createSemesterPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setBorder(BorderFactory.createTitledBorder("Select Semester"));
+        
+        JComboBox<Integer> semesterCombo = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8});
+        semesterCombo.setSelectedItem(1);  // Default to semester 
+        JButton loadBtn = new JButton("Load Subjects & Students");
+        loadBtn.addActionListener(e -> {
+            int semester = (Integer) semesterCombo.getSelectedItem();
+            loadSubjectsAndStudentsBySemester(semester);
+        });
+        
+        panel.add(new JLabel("Semester:"));
+        panel.add(semesterCombo);
+        panel.add(loadBtn);
+        
+        return panel;
+    }
+
+
     
     /**
      * Create header panel

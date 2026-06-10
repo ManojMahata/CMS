@@ -324,5 +324,38 @@ public boolean deleteStudent(String rollNumber) {
     }
 
 
+    /**
+ * Get students by semester
+ */
+public List<Student> getStudentsBySemester(int semester) {
+    List<Student> students = new ArrayList<>();
+    String sql = "SELECT * FROM students WHERE semester = ? ORDER BY roll_number";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setInt(1, semester);
+        ResultSet rs = pstmt.executeQuery();
+        
+        while (rs.next()) {
+            students.add(new Student(
+                rs.getString("roll_number"),
+                rs.getString("name"),
+                rs.getString("course"),
+                sql, rs.getInt("semester"),
+                rs.getString("faculty"),
+                rs.getString("email"),
+                rs.getString("phone"),
+                rs.getString("fee_status"), null
+            ));
+        }
+        
+    } catch (SQLException e) {
+        System.err.println("Error fetching students by semester: " + e.getMessage());
+    }
+    
+    return students;
+}
+
 
 }// main class closed

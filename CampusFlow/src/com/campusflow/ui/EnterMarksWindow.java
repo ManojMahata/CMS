@@ -75,20 +75,29 @@ public class EnterMarksWindow extends JFrame {
         add(mainPanel);
     }
     
-    /**
-     * Create selection panel
+    /**`
+     * Create selection panel with semester, subject, exam type, total marks
      */
     private JPanel createSelectionPanel() {
-        JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Exam Details"));
+        
+        // Semester selection
+        panel.add(new JLabel("Semester:"));
+        JComboBox<Integer> semesterCombo = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 6, 7, 8});
+        semesterCombo.setSelectedItem(5);
+        panel.add(semesterCombo);
         
         // Subject selection
         panel.add(new JLabel("Subject:"));
         subjectCombo = new JComboBox<>();
-        for (Subject s : teacherSubjects) {
-            subjectCombo.addItem(s);
-        }
-        subjectCombo.addActionListener(e -> loadStudents());
+        
+        // When semester changes, load relevant subjects
+        semesterCombo.addActionListener(e -> {
+            int semester = (Integer) semesterCombo.getSelectedItem();
+            loadSubjectsBySemester(semester);
+        });
+        
         panel.add(subjectCombo);
         
         // Exam type
@@ -103,8 +112,35 @@ public class EnterMarksWindow extends JFrame {
         totalMarksField = new JTextField("100");
         panel.add(totalMarksField);
         
+        // Load initial subjects
+        loadSubjectsBySemester(5);
+        
         return panel;
     }
+
+/**
+ * Load subjects by semester
+ */
+private void loadSubjectsBySemester(int semester) {
+    subjectCombo.removeAllItems();
+    teacherSubjects.clear();
+    
+    SubjectDAO dao = new SubjectDAO();
+    List<Subject> allSubjects = dao.getSubjectsByTeacher(loggedInTeacher.getTeacherId());
+    
+    for (Subject s : allSubjects) {
+        if (s.getSemester() == semester) {
+            teacherSubjects.add(s);
+            subjectCombo.addItem(s);
+        }
+    }
+    
+    if (!teacherSubjects.isEmpty()) {
+        loadStudents();
+    }
+    
+    System.out.println("Loaded " + teacherSubjects.size() + " subjects for semester " + semester);
+}
     
     /**
      * Create table panel
