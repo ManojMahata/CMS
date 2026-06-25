@@ -77,12 +77,12 @@ public class AdminDashboard extends JFrame {
         
         // Manage Subjects Button
         JButton subjectsBtn = createDashboardButton(" Manage Subjects", new Color(155, 89, 182));
-        subjectsBtn.addActionListener(e -> openManageSubjects());
+        subjectsBtn.addActionListener(e -> openManageSubjects());  // ← TEMPORARILY SWAP TO FEES
         buttonsPanel.add(subjectsBtn);
-        
+
         // Manage Fees Button
         JButton feesBtn = createDashboardButton("Manage Fees", new Color(230, 126, 34));
-        feesBtn.addActionListener(e -> openManageFees());
+        feesBtn.addActionListener(e -> openManageFees());  // ← TEMPORARILY SWAP TO SUBJECTS
         buttonsPanel.add(feesBtn);
         
         // View All Reports Button
@@ -162,16 +162,20 @@ public class AdminDashboard extends JFrame {
      * Open Manage Subjects window
      */
     private void openManageSubjects() {
-        System.out.println("Opening Manage Subjects...");
-        JOptionPane.showMessageDialog(this, "Manage Subjects coming soon!");
+    System.out.println("DEBUG: openManageSubjects() called!");
+    System.out.println("Creating new ManageSubjectsWindow...");
+    new ManageSubjectsWindow(loggedInAdmin);
+    System.out.println("ManageSubjectsWindow opened!");
     }
     
     /**
      * Open Manage Fees window
      */
     private void openManageFees() {
-        System.out.println("Opening Manage Fees...");
-        JOptionPane.showMessageDialog(this, "Manage Fees coming soon!");
+    System.out.println("DEBUG: openManageFees() called!");
+    System.out.println("Creating new ManageFeesWindow...");
+    new ManageFeesWindow(loggedInAdmin);
+    System.out.println("ManageFeesWindow opened!");
     }
     
     /**

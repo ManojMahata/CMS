@@ -38,4 +38,9 @@ public class Subject {
         return subjectCode + " - " + subjectName;
     }
 
+    public Object getTeacherId() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTeacherId'");
+    }
+
 }// main class closed 
