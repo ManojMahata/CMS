@@ -183,7 +183,7 @@ public class AdminDashboard extends JFrame {
      */
     private void openSystemReports() {
         System.out.println("Opening System Reports...");
-        JOptionPane.showMessageDialog(this, "System Reports coming soon!");
+        new SystemReportsWindow(loggedInAdmin);
     }
     
     /**
@@ -191,7 +191,7 @@ public class AdminDashboard extends JFrame {
      */
     private void openViewAttendance() {
         System.out.println("Opening Attendance View...");
-        JOptionPane.showMessageDialog(this, "View Attendance coming soon!");
+        new ViewAttendanceWindow(loggedInAdmin);
     }
     
     /**
