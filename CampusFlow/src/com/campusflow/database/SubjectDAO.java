@@ -4,7 +4,6 @@ import com.campusflow.model.Subject;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Statement;
 
 /**
  * subjectDao - to handle subject database operations
@@ -49,9 +48,9 @@ public class SubjectDAO {
     }// getSubjectsByTeacherz method closed
 
     /**
- * Get all subjects
- */
-public List<Subject> getAllSubjects() {
+    * Get all subjects
+    */
+    public List<Subject> getAllSubjects() {
     List<Subject> subjects = new ArrayList<>();
     String sql = "SELECT * FROM subjects ORDER BY subject_code";
     
@@ -65,18 +64,18 @@ public List<Subject> getAllSubjects() {
                 rs.getString("subject_name"),
                 rs.getString("course"),
                 rs.getInt("semester"),
-                rs.getString("teacher_id")
-            ));
-        }
+                rs.getString("assigned_teacher")  // CHANGED: teacher_id -> assigned_teacher
+                ));
+            }
         
-    } catch (SQLException e) {
-        System.err.println("Error fetching subjects: " + e.getMessage());
-    }
+        } catch (SQLException e) {
+        System.err.println("Error fetching subjects: " + e. getMessage());
+        }
     
-    return subjects;
-}
+        return subjects;
+    }
 
-/**
+    /**
  * Add new subject
  */
 public boolean addSubject(String code, String name, String course, int semester, String teacherId) {
@@ -92,11 +91,11 @@ public boolean addSubject(String code, String name, String course, int semester,
         pstmt.setString(5, teacherId);
         
         int rows = pstmt.executeUpdate();
-        System.out.println("✅ Subject added: " + code);
+        System.out.println("Subject added: " + code);
         return rows > 0;
         
     } catch (SQLException e) {
-        System.err.println("❌ Error adding subject: " + e.getMessage());
+        System.err.println("Error adding subject: " + e.getMessage());
         return false;
     }
 }
@@ -105,7 +104,7 @@ public boolean addSubject(String code, String name, String course, int semester,
  * Reassign teacher to subject
  */
 public boolean reassignTeacher(String subjectCode, String newTeacherId) {
-    String sql = "UPDATE subjects SET teacher_id = ? WHERE subject_code = ?";
+    String sql = "UPDATE subjects SET assigned_teacher = ? WHERE subject_code = ?";  // CHANGED
     
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -114,11 +113,11 @@ public boolean reassignTeacher(String subjectCode, String newTeacherId) {
         pstmt.setString(2, subjectCode);
         
         int rows = pstmt.executeUpdate();
-        System.out.println("✅ Teacher reassigned for: " + subjectCode);
+        System.out.println("Teacher reassigned for: " + subjectCode);
         return rows > 0;
         
     } catch (SQLException e) {
-        System.err.println("❌ Error reassigning teacher: " + e.getMessage());
+        System.err.println("Error reassigning teacher: " + e.getMessage());
         return false;
     }
 }

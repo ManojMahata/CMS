@@ -146,77 +146,113 @@ public class ManageSubjectsWindow extends JFrame {
         System.out.println("Loaded " + subjects.size() + " subjects");
     }
     
-    /**
-     * Show add subject dialog
-     */
+   /**
+    * Show add subject dialog
+    */
     private void showAddSubjectDialog() {
-        JDialog dialog = new JDialog(this, "Add New Subject", true);
-        dialog.setSize(500, 350);
-        dialog.setLocationRelativeTo(this);
+    JDialog dialog = new JDialog(this, "Add New Subject", true);
+    dialog.setSize(600, 400);
+    dialog.setLocationRelativeTo(this);
+    
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    
+    // Subject Code
+    JPanel codePanel = new JPanel(new BorderLayout(10, 10));
+    codePanel.add(new JLabel("Subject Code:"), BorderLayout.WEST);
+    JTextField codeField = new JTextField(15);
+    codePanel.add(codeField, BorderLayout.CENTER);
+    panel.add(codePanel);
+    panel.add(Box.createVerticalStrut(10));
+    
+    // Subject Name
+    JPanel namePanel = new JPanel(new BorderLayout(10, 10));
+    namePanel.add(new JLabel("Subject Name:"), BorderLayout.WEST);
+    JTextField nameField = new JTextField(15);
+    namePanel.add(nameField, BorderLayout.CENTER);
+    panel.add(namePanel);
+    panel.add(Box.createVerticalStrut(10));
+    
+    // Course
+    JPanel coursePanel = new JPanel(new BorderLayout(10, 10));
+    coursePanel.add(new JLabel("Course:"), BorderLayout.WEST);
+    JTextField courseField = new JTextField("BCA", 15);
+    coursePanel.add(courseField, BorderLayout.CENTER);
+    panel.add(coursePanel);
+    panel.add(Box.createVerticalStrut(10));
+    
+    // Semester
+    JPanel semesterPanel = new JPanel(new BorderLayout(10, 10));
+    semesterPanel.add(new JLabel("Semester:"), BorderLayout.WEST);
+    JTextField semesterField = new JTextField("5", 15);
+    semesterPanel.add(semesterField, BorderLayout.CENTER);
+    panel.add(semesterPanel);
+    panel.add(Box.createVerticalStrut(10));
+    
+    // Teacher
+    JPanel teacherPanel = new JPanel(new BorderLayout(10, 10));
+    teacherPanel.add(new JLabel("Assign to Teacher:"), BorderLayout.WEST);
+    
+    TeacherDAO teacherDAO = new TeacherDAO();
+    List<Teacher> teachers = teacherDAO.getAllTeachers();
+    JComboBox<Teacher> teacherCombo = new JComboBox<>();
+    for (Teacher t : teachers) {
+        teacherCombo.addItem(t);
+    }
+    teacherPanel.add(teacherCombo, BorderLayout.CENTER);
+    panel.add(teacherPanel);
+    panel.add(Box.createVerticalStrut(20));
+    
+    // Buttons
+    JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    
+    JButton saveBtn = new JButton("💾 Save");
+    saveBtn.setBackground(new Color(46, 204, 113));
+    saveBtn.setForeground(Color.WHITE);
+    saveBtn.setFont(new Font("Arial", Font.BOLD, 14));
+    
+    JButton cancelBtn = new JButton("Cancel");
+    
+    buttonsPanel.add(saveBtn);
+    buttonsPanel.add(cancelBtn);
+    
+    panel.add(buttonsPanel);
+    
+    saveBtn.addActionListener(e -> {
+        String code = codeField.getText().trim().toUpperCase();
+        String name = nameField.getText().trim();
+        String course = courseField.getText().trim();
         
-        JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
-        JTextField codeField = new JTextField();
-        JTextField nameField = new JTextField();
-        JTextField courseField = new JTextField("BCA");
-        JTextField semesterField = new JTextField("5");
-        
-        TeacherDAO teacherDAO = new TeacherDAO();
-        List<Teacher> teachers = teacherDAO.getAllTeachers();
-        JComboBox<Teacher> teacherCombo = new JComboBox<>();
-        for (Teacher t : teachers) {
-            teacherCombo.addItem(t);
+        if (code.isEmpty() || name.isEmpty()) {
+            JOptionPane.showMessageDialog(dialog, "Code and name are required!");
+            return;
         }
         
-        panel.add(new JLabel("Subject Code:"));
-        panel.add(codeField);
-        panel.add(new JLabel("Subject Name:"));
-        panel.add(nameField);
-        panel.add(new JLabel("Course:"));
-        panel.add(courseField);
-        panel.add(new JLabel("Semester:"));
-        panel.add(semesterField);
-        panel.add(new JLabel("Assign to Teacher:"));
-        panel.add(teacherCombo);
-        
-        JButton saveBtn = new JButton("Save");
-        saveBtn.setBackground(new Color(46, 204, 113));
-        saveBtn.setForeground(Color.WHITE);
-        
-        JButton cancelBtn = new JButton("Cancel");
-        
-        panel.add(saveBtn);
-        panel.add(cancelBtn);
-        
-        saveBtn.addActionListener(e -> {
-            String code = codeField.getText().trim().toUpperCase();
-            String name = nameField.getText().trim();
-            String course = courseField.getText().trim();
+        try {
             int semester = Integer.parseInt(semesterField.getText().trim());
             Teacher selectedTeacher = (Teacher) teacherCombo.getSelectedItem();
-            
-            if (code.isEmpty() || name.isEmpty()) {
-                JOptionPane.showMessageDialog(dialog, "Code and name are required!");
-                return;
-            }
             
             SubjectDAO dao = new SubjectDAO();
             boolean success = dao.addSubject(code, name, course, semester, selectedTeacher.getTeacherId());
             
             if (success) {
-                JOptionPane.showMessageDialog(dialog, "Subject added successfully!");
+                JOptionPane.showMessageDialog(dialog, "✅ Subject added successfully!");
                 dialog.dispose();
                 loadSubjects();
             } else {
-                JOptionPane.showMessageDialog(dialog, "Failed to add subject");
+                JOptionPane.showMessageDialog(dialog, "❌ Failed to add subject (duplicate code?)");
             }
-        });
-        
-        cancelBtn.addActionListener(e -> dialog.dispose());
-        
-        dialog.add(panel);
-        dialog.setVisible(true);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(dialog, "Semester must be a number!");
+        }
+    });
+    
+    cancelBtn.addActionListener(e -> dialog.dispose());
+    
+    dialog.add(panel);
+    dialog.setVisible(true);
+    
     }
     
     /**

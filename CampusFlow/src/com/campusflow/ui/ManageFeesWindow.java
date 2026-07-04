@@ -187,94 +187,107 @@ public class ManageFeesWindow extends JFrame {
     }
     
     /**
-     * Mark selected student fee as paid
-     */
+    * Mark selected student fee as paid
+    */
     private void markStudentFeePaid() {
-        int selectedRow = ((JTable) getFocusOwner()).getSelectedRow();
+        int selectedRow = findFeesTable().getSelectedRow();
         
-        // Try to get selected row from table
-        JPanel panel = (JPanel) getContentPane();
-        JTable table = findTable(panel);
-        
-        if (table == null || table.getSelectedRow() == -1) {
+        if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a student!");
             return;
         }
         
-        String rollNumber = (String) tableModel.getValueAt(table.getSelectedRow(), 0);
-        String name = (String) tableModel.getValueAt(table.getSelectedRow(), 1);
+        String rollNumber = (String) tableModel.getValueAt(selectedRow, 0);
+        String name = (String) tableModel.getValueAt(selectedRow, 1);
+        String course = (String) tableModel.getValueAt(selectedRow, 2);
+        int semester = (Integer) tableModel.getValueAt(selectedRow, 3);
+        String faculty = (String) tableModel.getValueAt(selectedRow, 4);
         
         StudentDAO dao = new StudentDAO();
         boolean success = dao.updateStudent(
             rollNumber,
             name,
-            (String) tableModel.getValueAt(table.getSelectedRow(), 2),
-            (Integer) tableModel.getValueAt(table.getSelectedRow(), 3),
-            (String) tableModel.getValueAt(table.getSelectedRow(), 4),
+            course,
+            semester,
+            faculty,
             "",
             "",
             "Paid"
         );
         
         if (success) {
-            JOptionPane.showMessageDialog(this, "✅ Fee marked as PAID for " + rollNumber);
+            JOptionPane.showMessageDialog(this, "Fee marked as PAID for " + rollNumber);
             loadFees();
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to update fee status");
         }
     }
     
     /**
-     * Mark selected student fee as pending
-     */
+    * Mark selected student fee as pending
+    */
     private void markStudentFeePending() {
-        JPanel panel = (JPanel) getContentPane();
-        JTable table = findTable(panel);
-        
-        if (table == null || table.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a student!");
-            return;
-        }
-        
-        String rollNumber = (String) tableModel.getValueAt(table.getSelectedRow(), 0);
-        String name = (String) tableModel.getValueAt(table.getSelectedRow(), 1);
-        
-        StudentDAO dao = new StudentDAO();
-        boolean success = dao.updateStudent(
-            rollNumber,
-            name,
-            (String) tableModel.getValueAt(table.getSelectedRow(), 2),
-            (Integer) tableModel.getValueAt(table.getSelectedRow(), 3),
-            (String) tableModel.getValueAt(table.getSelectedRow(), 4),
-            "",
-            "",
-            "Pending"
-        );
-        
-        if (success) {
-            JOptionPane.showMessageDialog(this, "✅ Fee marked as PENDING for " + rollNumber);
-            loadFees();
+    int selectedRow = findFeesTable().getSelectedRow();
+    
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a student!");
+        return;
+    }
+    
+    String rollNumber = (String) tableModel.getValueAt(selectedRow, 0);
+    String name = (String) tableModel.getValueAt(selectedRow, 1);
+    String course = (String) tableModel.getValueAt(selectedRow, 2);
+    int semester = (Integer) tableModel.getValueAt(selectedRow, 3);
+    String faculty = (String) tableModel.getValueAt(selectedRow, 4);
+    
+    StudentDAO dao = new StudentDAO();
+    boolean success = dao.updateStudent(
+        rollNumber,
+        name,
+        course,
+        semester,
+        faculty,
+        "",
+        "",
+        "Pending"
+    );
+    
+    if (success) {
+        JOptionPane.showMessageDialog(this, "Fee marked as PENDING for " + rollNumber);
+        loadFees();
+    } else {
+        JOptionPane.showMessageDialog(this, "Failed to update fee status");
         }
     }
     
+    /**
+ * Find the fees table in the panel
+ */
+private JTable findFeesTable() {
+    JPanel contentPane = (JPanel) getContentPane();
+    return findTable(contentPane);
+}
+
     /**
      * Helper method to find JTable
      */
     private JTable findTable(JComponent comp) {
-        if (comp instanceof JTable) return (JTable) comp;
-        
-        if (comp instanceof JScrollPane) {
-            JScrollPane scroll = (JScrollPane) comp;
-            if (scroll.getViewport().getView() instanceof JTable) {
-                return (JTable) scroll.getViewport().getView();
+    if (comp instanceof JTable) return (JTable) comp;
+    
+    if (comp instanceof JScrollPane) {
+        JScrollPane scroll = (JScrollPane) comp;
+        if (scroll.getViewport().getView() instanceof JTable) {
+            return (JTable) scroll.getViewport().getView();
             }
         }
-        
-        if (comp instanceof JPanel) {
-            for (java.awt.Component c : ((JPanel) comp).getComponents()) {
-                JTable result = findTable((JComponent) c);
-                if (result != null) return result;
+    
+    if (comp instanceof JPanel) {
+        for (java.awt.Component c : ((JPanel) comp).getComponents()) {
+            JTable result = findTable((JComponent) c);
+            if (result != null) return result;
             }
         }
-        
+    
         return null;
     }
 }
