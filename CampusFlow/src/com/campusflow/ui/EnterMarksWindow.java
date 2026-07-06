@@ -57,25 +57,25 @@ public class EnterMarksWindow extends JFrame {
     }
     
     /**
-     * Initialize components
-     */
+    * Initialize components
+    */
     private void initComponents() {
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         
-        // Top panel - selection
+        // TOP PANEL FIRST (but don't load subjects yet)
         mainPanel.add(createSelectionPanel(), BorderLayout.NORTH);
         
-        // Center - table
+        // CENTER - TABLE (must be created BEFORE loading subjects)
         mainPanel.add(createTablePanel(), BorderLayout.CENTER);
         
-        // Bottom - buttons
+        // BOTTOM - BUTTONS
         mainPanel.add(createButtonPanel(), BorderLayout.SOUTH);
         
         add(mainPanel);
     }
     
-    /**`
+    /**
      * Create selection panel with semester, subject, exam type, total marks
      */
     private JPanel createSelectionPanel() {
@@ -91,13 +91,6 @@ public class EnterMarksWindow extends JFrame {
         // Subject selection
         panel.add(new JLabel("Subject:"));
         subjectCombo = new JComboBox<>();
-        
-        // When semester changes, load relevant subjects
-        semesterCombo.addActionListener(e -> {
-            int semester = (Integer) semesterCombo.getSelectedItem();
-            loadSubjectsBySemester(semester);
-        });
-        
         panel.add(subjectCombo);
         
         // Exam type
@@ -112,35 +105,41 @@ public class EnterMarksWindow extends JFrame {
         totalMarksField = new JTextField("100");
         panel.add(totalMarksField);
         
-        // Load initial subjects
+        // When semester changes, load relevant subjects
+        semesterCombo.addActionListener(e -> {
+            int semester = (Integer) semesterCombo.getSelectedItem();
+            loadSubjectsBySemester(semester);
+        });
+        
+        // Load initial subjects for semester 5
         loadSubjectsBySemester(5);
         
         return panel;
     }
 
-/**
- * Load subjects by semester
- */
-private void loadSubjectsBySemester(int semester) {
-    subjectCombo.removeAllItems();
-    teacherSubjects.clear();
-    
-    SubjectDAO dao = new SubjectDAO();
-    List<Subject> allSubjects = dao.getSubjectsByTeacher(loggedInTeacher.getTeacherId());
-    
-    for (Subject s : allSubjects) {
-        if (s.getSemester() == semester) {
-            teacherSubjects.add(s);
-            subjectCombo.addItem(s);
+    /**
+     * Load subjects by semester
+     */
+    private void loadSubjectsBySemester(int semester) {
+        subjectCombo.removeAllItems();
+        teacherSubjects.clear();
+        
+        SubjectDAO dao = new SubjectDAO();
+        List<Subject> allSubjects = dao.getSubjectsByTeacher(loggedInTeacher.getTeacherId());
+        
+        for (Subject s : allSubjects) {
+            if (s.getSemester() == semester) {
+                teacherSubjects.add(s);
+                subjectCombo.addItem(s);
+            }
         }
+        
+        if (!teacherSubjects.isEmpty()) {
+            loadStudents();  // Only load students AFTER tableModel is created
+        }
+        
+        System.out.println("Loaded " + teacherSubjects.size() + " subjects for semester " + semester);
     }
-    
-    if (!teacherSubjects.isEmpty()) {
-        loadStudents();
-    }
-    
-    System.out.println("Loaded " + teacherSubjects.size() + " subjects for semester " + semester);
-}
     
     /**
      * Create table panel

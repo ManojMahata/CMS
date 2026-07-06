@@ -75,18 +75,8 @@ public class Teacher {
         // for userName and passwordHash we are not using setters those two are set once.
 
         @Override
-        public String toString(){
-            return "Teacher{" + 
-                    "Id='" + teacherId + '\'' +
-                    "Name='" + name + '\'' + 
-                    "Department='" + department + '\'' + 
-                    "Email='" + email + '\'' +
-                    "Phone='" + phone + '\'' +
-                    "UserName='" + username + '\'' +
-                    '}';
-        }// to string method closed
-
-
-
+        public String toString() {
+        return teacherId + " - " + name;
+        }
    
 }// main class ends here
