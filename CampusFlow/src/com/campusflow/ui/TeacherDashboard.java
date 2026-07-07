@@ -186,7 +186,7 @@ public class TeacherDashboard extends JFrame {
         // oopen question paper upload window
         private void openUploadWindow() {
                 System.out.println("Opening Upload Window...");
-                JOptionPane.showMessageDialog(this, "Upload coming soon");
+                new UploadQuestionPaperWindow(loggedInTeacher);
         }// uploadwinod method ends here
 
 
