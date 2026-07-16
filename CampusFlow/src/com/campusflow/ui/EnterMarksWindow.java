@@ -26,57 +26,64 @@ public class EnterMarksWindow extends JFrame {
     private JTable marksTable;
     private DefaultTableModel tableModel;
     
-    /**
-     * Constructor
-     */
-    public EnterMarksWindow(Teacher teacher) {
-        this.loggedInTeacher = teacher;
-        
-        // Load teacher's subjects
-        SubjectDAO dao = new SubjectDAO();
-        teacherSubjects = dao.getSubjectsByTeacher(teacher.getTeacherId());
-        
-        if (teacherSubjects.isEmpty()) {
-            JOptionPane.showMessageDialog(null,
-                "No subjects assigned to you!",
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-            dispose();
-            return;
-        }
-        
-        // Setup window
-        setTitle("Enter Marks - " + teacher.getName());
-        setSize(700, 500);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
-        
-        initComponents();
-        
-        setVisible(true);
-    }
     
     /**
-    * Initialize components
+    * Constructor
     */
-    private void initComponents() {
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        
-        // TOP PANEL FIRST (but don't load subjects yet)
-        mainPanel.add(createSelectionPanel(), BorderLayout.NORTH);
-        
-        // CENTER - TABLE (must be created BEFORE loading subjects)
-        mainPanel.add(createTablePanel(), BorderLayout.CENTER);
-        
-        // BOTTOM - BUTTONS
-        mainPanel.add(createButtonPanel(), BorderLayout.SOUTH);
-        
-        add(mainPanel);
-    }
-    
+        public EnterMarksWindow(Teacher teacher) {
+            this.loggedInTeacher = teacher;
+            
+            // Load teacher's subjects
+            SubjectDAO dao = new SubjectDAO();
+            teacherSubjects = dao.getSubjectsByTeacher(teacher.getTeacherId());
+            
+            if (teacherSubjects.isEmpty()) {
+                JOptionPane.showMessageDialog(null,
+                    "No subjects assigned to you!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                dispose();
+                return;
+            }
+            
+            // Setup window
+            setTitle("Enter Marks - " + teacher.getName());
+            setSize(700, 500);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setLocationRelativeTo(null);
+            
+            initComponents();
+            
+            setVisible(true);
+        }
+
     /**
-     * Create selection panel with semester, subject, exam type, total marks
+    * Initialize components - CORRECT ORDER
+    */
+        private void initComponents() {
+            JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+            
+            // STEP 1: Create selection panel (initializes subjectCombo)
+            JPanel selectionPanel = createSelectionPanel();
+            
+            // STEP 2: Create table panel (uses subjectCombo)
+            JPanel tablePanel = createTablePanel();
+            
+            // STEP 3: Create button panel
+            JPanel buttonPanel = createButtonPanel();
+            
+            // Add all to main
+            mainPanel.add(selectionPanel, BorderLayout.NORTH);
+            mainPanel.add(tablePanel, BorderLayout.CENTER);
+            mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+            
+            add(mainPanel);
+        }
+
+
+    /**
+     * Create selection panel
      */
     private JPanel createSelectionPanel() {
         JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
@@ -88,9 +95,13 @@ public class EnterMarksWindow extends JFrame {
         semesterCombo.setSelectedItem(5);
         panel.add(semesterCombo);
         
-        // Subject selection
+        // Subject selection - INITIALIZE FIRST!
         panel.add(new JLabel("Subject:"));
-        subjectCombo = new JComboBox<>();
+        subjectCombo = new JComboBox<>();  // Create it HERE
+        for (Subject s : teacherSubjects) {
+            subjectCombo.addItem(s);
+        }
+        subjectCombo.addActionListener(e -> loadStudents());
         panel.add(subjectCombo);
         
         // Exam type
@@ -105,14 +116,11 @@ public class EnterMarksWindow extends JFrame {
         totalMarksField = new JTextField("100");
         panel.add(totalMarksField);
         
-        // When semester changes, load relevant subjects
+        // Semester listener
         semesterCombo.addActionListener(e -> {
             int semester = (Integer) semesterCombo.getSelectedItem();
             loadSubjectsBySemester(semester);
         });
-        
-        // Load initial subjects for semester 5
-        loadSubjectsBySemester(5);
         
         return panel;
     }

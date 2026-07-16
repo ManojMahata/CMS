@@ -122,45 +122,50 @@ public class UploadQuestionPaperWindow extends JFrame {
 
 
     /**
-     *upload paper dialog
-     */
-    private void uploadPaper() {
-        int selectedRow = papersTable.getSelectedRow();
-
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a subject!");
-            return;
-        }
-
-        // file chooser dialog
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select Question Paper PDF");
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("PDF Files", "pdf"));
-
-        int result = fileChooser.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION
-        ) {
-            File selectedFile = fileChooser.getSelectedFile();
-            String filePath = selectedFile.getAbsolutePath();
-
-            String subjectCode = (String) tableModel.getValueAt(selectedRow, 0);
-            
+ * Upload paper dialog
+ */
+private void uploadPaper() {
+    int selectedRow = papersTable.getSelectedRow();
+    
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a subject!");
+        return;
+    }
+    
+    // File chooser dialog
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Select Question Paper PDF");
+    fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("PDF Files", "pdf"));
+    
+    int result = fileChooser.showOpenDialog(this);
+    
+    if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = fileChooser.getSelectedFile();
+        String filePath = selectedFile.getAbsolutePath();
+        
+        String subjectCode = (String) tableModel.getValueAt(selectedRow, 0);
+        
+        // Save to database
+        QuestionPaperDAO dao = new QuestionPaperDAO();
+        boolean success = dao.uploadPaper(subjectCode, filePath, loggedInTeacher.getTeacherId());
+        
+        if (success) {
             JOptionPane.showMessageDialog(this,
-                "Question paper uploaded successfully\n" +
-                "Subject: " + subjectCode + "\n" + 
+                "Question paper uploaded successfully!\n" +
+                "Subject: " + subjectCode + "\n" +
                 "File: " + selectedFile.getName(),
                 "Success",
-                JOptionPane.INFORMATION_MESSAGE
-            );
-
-            // update table
+                JOptionPane.INFORMATION_MESSAGE);
+            
+            // Update table
             tableModel.setValueAt(filePath, selectedRow, 2);
             tableModel.setValueAt(new java.util.Date().toString(), selectedRow, 3);
-
-            System.out.println("Paper uploaded for" + subjectCode + ": " + filePath);
+            
+            System.out.println("Paper uploaded for " + subjectCode + ": " + filePath);
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to upload paper to database");
         }
-
     }
+}
 
 }// main class ends here
