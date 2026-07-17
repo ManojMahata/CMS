@@ -121,7 +121,7 @@ public class UploadQuestionPaperWindow extends JFrame {
     }
 
 
-    /**
+/**
  * Upload paper dialog
  */
 private void uploadPaper() {
@@ -145,9 +145,21 @@ private void uploadPaper() {
         
         String subjectCode = (String) tableModel.getValueAt(selectedRow, 0);
         
+        // Get semester from subject
+        SubjectDAO subjectDAO = new SubjectDAO();
+        List<Subject> allSubjects = subjectDAO.getSubjectsByTeacher(loggedInTeacher.getTeacherId());
+        int semester = 5;  // Default
+        
+        for (Subject s : allSubjects) {
+            if (s.getSubjectCode().equals(subjectCode)) {
+                semester = s.getSemester();
+                break;
+            }
+        }
+        
         // Save to database
         QuestionPaperDAO dao = new QuestionPaperDAO();
-        boolean success = dao.uploadPaper(subjectCode, filePath, loggedInTeacher.getTeacherId());
+        boolean success = dao.uploadPaper(subjectCode, filePath, loggedInTeacher.getTeacherId(), semester);
         
         if (success) {
             JOptionPane.showMessageDialog(this,
