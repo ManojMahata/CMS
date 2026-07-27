@@ -224,71 +224,121 @@ public class ManageTeachersWindow extends JFrame{
 
 
 
-    /**add teacher dialog */
+    /**
+    * Show add teacher dialog
+    */
     private void showAddTeacherDialog() {
-
-        JDialog dialog = new JDialog(this, "Add new Teacher", true);
-        dialog.setSize(500, 350);
+        JDialog dialog = new JDialog(this, "Add New Teacher", true);
+        dialog.setSize(600, 500);
         dialog.setLocationRelativeTo(this);
         
-        JPanel panel =  new JPanel(new GridLayout(6, 2, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-    
-        JTextField idField = new JTextField();
-        JTextField nameField = new JTextField();
-        JTextField emailField = new JTextField();
-        JTextField usernameField = new JTextField();
-        JPasswordField passwordField = new JPasswordField();
-
-        panel.add(new JLabel("Teacher ID:"));
-        panel.add(idField);
-        panel.add(new JLabel("Name:"));
-        panel.add(nameField);
-        panel.add(new JLabel("Email:"));
-        panel.add(emailField);
-        panel.add(new JLabel("Username:"));
-        panel.add(usernameField);
-        panel.add(new JLabel("Password: "));
-        panel.add(passwordField);
-
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
+        JTextField idField = new JTextField(20);
+        JTextField nameField = new JTextField(20);
+        JTextField departmentField = new JTextField("CSE", 20);
+        JTextField emailField = new JTextField(20);
+        JTextField phoneField = new JTextField(20);
+        JTextField usernameField = new JTextField(20);
+        JPasswordField passwordField = new JPasswordField(20);
+        
+        // Teacher ID
+        JPanel idPanel = new JPanel(new BorderLayout(10, 10));
+        idPanel.add(new JLabel("Teacher ID:"), BorderLayout.WEST);
+        idPanel.add(idField, BorderLayout.CENTER);
+        mainPanel.add(idPanel);
+        mainPanel.add(Box.createVerticalStrut(10));
+        
+        // Name
+        JPanel namePanel = new JPanel(new BorderLayout(10, 10));
+        namePanel.add(new JLabel("Name:"), BorderLayout.WEST);
+        namePanel.add(nameField, BorderLayout.CENTER);
+        mainPanel.add(namePanel);
+        mainPanel.add(Box.createVerticalStrut(10));
+        
+        // Department
+        JPanel deptPanel = new JPanel(new BorderLayout(10, 10));
+        deptPanel.add(new JLabel("Department:"), BorderLayout.WEST);
+        deptPanel.add(departmentField, BorderLayout.CENTER);
+        mainPanel.add(deptPanel);
+        mainPanel.add(Box.createVerticalStrut(10));
+        
+        // Email
+        JPanel emailPanel = new JPanel(new BorderLayout(10, 10));
+        emailPanel.add(new JLabel("Email:"), BorderLayout.WEST);
+        emailPanel.add(emailField, BorderLayout.CENTER);
+        mainPanel.add(emailPanel);
+        mainPanel.add(Box.createVerticalStrut(10));
+        
+        // Phone
+        JPanel phonePanel = new JPanel(new BorderLayout(10, 10));
+        phonePanel.add(new JLabel("Phone:"), BorderLayout.WEST);
+        phonePanel.add(phoneField, BorderLayout.CENTER);
+        mainPanel.add(phonePanel);
+        mainPanel.add(Box.createVerticalStrut(10));
+        
+        // Username
+        JPanel usernamePanel = new JPanel(new BorderLayout(10, 10));
+        usernamePanel.add(new JLabel("Username:"), BorderLayout.WEST);
+        usernamePanel.add(usernameField, BorderLayout.CENTER);
+        mainPanel.add(usernamePanel);
+        mainPanel.add(Box.createVerticalStrut(10));
+        
+        // Password
+        JPanel passwordPanel = new JPanel(new BorderLayout(10, 10));
+        passwordPanel.add(new JLabel("Password:"), BorderLayout.WEST);
+        passwordPanel.add(passwordField, BorderLayout.CENTER);
+        mainPanel.add(passwordPanel);
+        mainPanel.add(Box.createVerticalStrut(20));
+        
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        
         JButton saveBtn = new JButton("Save");
         saveBtn.setBackground(new Color(46, 204, 113));
         saveBtn.setForeground(Color.WHITE);
-
+        saveBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        
         JButton cancelBtn = new JButton("Cancel");
-
-        panel.add(saveBtn);
-        panel.add(cancelBtn);
-
-        saveBtn.addActionListener(e ->{
-            String id = idField.getText().trim();
+        
+        buttonPanel.add(saveBtn);
+        buttonPanel.add(cancelBtn);
+        
+        mainPanel.add(buttonPanel);
+        
+        saveBtn.addActionListener(e -> {
+            String id = idField.getText().trim().toUpperCase();
             String name = nameField.getText().trim();
+            String department = departmentField.getText().trim();
             String email = emailField.getText().trim();
+            String phone = phoneField.getText().trim();
             String username = usernameField.getText().trim();
-            String password = new String(passwordField.getPassword());
-
-            if (id.isEmpty() || name.isEmpty() || username.isEmpty() || password.isEmpty()){
-                JOptionPane.showMessageDialog(dialog, "All fields are required!"); 
+            String password = new String(passwordField.getPassword()).trim();
+            
+            if (id.isEmpty() || name.isEmpty() || department.isEmpty() || username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "All required fields must be filled!");
+                return;
             }
-
-            String passwrodHash = PasswordHasher.hashPassword(password);
-
+            
             TeacherDAO dao = new TeacherDAO();
-            boolean success = dao.addTeacher(id, name, email, username, passwrodHash);
-
+            String passwordHash = com.campusflow.utils.PasswordHasher.hashPassword(password);
+            
+            boolean success = dao.addTeacher(id, name, department, email, phone, username, passwordHash);
+            
             if (success) {
-                JOptionPane.showMessageDialog(dialog, "Teacher added successfully");
+                JOptionPane.showMessageDialog(dialog, "Teacher added successfully!");
                 dialog.dispose();
                 loadTeachers();
             } else {
-                JOptionPane.showMessageDialog(dialog, "Failed to add teacher (duplicate ID?");
+                JOptionPane.showMessageDialog(dialog, "Failed to add teacher");
             }
-
         });
-
+        
         cancelBtn.addActionListener(e -> dialog.dispose());
-
-        dialog.add(panel);
+        
+        dialog.add(mainPanel);
         dialog.setVisible(true);
     }
 

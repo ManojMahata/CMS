@@ -272,8 +272,32 @@ public class TeacherDAO {
         return subjects;
     }
 
-    public boolean addTeacher(Teacher manoj, String string) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addTeacher'");
+    /**
+     * Add new teacher
+     */
+    public boolean addTeacher(String id, String name, String department, String email, String phone, String username, String passwordHash) {
+        String sql = "INSERT INTO teachers (teacher_id, name, department, email, phone, username, password_hash, created_date) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, id);
+            pstmt.setString(2, name);
+            pstmt.setString(3, department);
+            pstmt.setString(4, email);
+            pstmt.setString(5, phone);
+            pstmt.setString(6, username);
+            pstmt.setString(7, passwordHash);
+            
+            int rows = pstmt.executeUpdate();
+            System.out.println("Teacher added: " + id);
+            return rows > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error adding teacher: " + e.getMessage());
+            return false;
+        }
     }
+
 }
