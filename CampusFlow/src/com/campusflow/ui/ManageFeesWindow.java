@@ -76,7 +76,7 @@ public class ManageFeesWindow extends JFrame {
         });
         filterPanel.add(filterBtn);
         
-        JButton refreshBtn = new JButton("🔄 Refresh");
+        JButton refreshBtn = new JButton("Refresh");
         refreshBtn.addActionListener(e -> loadFees());
         filterPanel.add(refreshBtn);
         
@@ -117,13 +117,13 @@ public class ManageFeesWindow extends JFrame {
     private JPanel createBottomPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton markPaidBtn = new JButton("✅ Mark as Paid");
+        JButton markPaidBtn = new JButton("Mark as Paid");
         markPaidBtn.setBackground(new Color(46, 204, 113));
         markPaidBtn.setForeground(Color.WHITE);
         markPaidBtn.addActionListener(e -> markStudentFeePaid());
         panel.add(markPaidBtn);
         
-        JButton markPendingBtn = new JButton("⏳ Mark as Pending");
+        JButton markPendingBtn = new JButton("Mark as Pending");
         markPendingBtn.setBackground(new Color(230, 126, 34));
         markPendingBtn.setForeground(Color.WHITE);
         markPendingBtn.addActionListener(e -> markStudentFeePending());
@@ -156,7 +156,7 @@ public class ManageFeesWindow extends JFrame {
             });
         }
         
-        System.out.println("✅ Loaded fees for " + students.size() + " students");
+        System.out.println("Loaded fees for " + students.size() + " students");
     }
     
     /**

@@ -130,7 +130,7 @@ private JPanel createTopPanel() {
         });
     }
     
-    System.out.println("✅ Loaded " + students.size() + " students from semester " + semester);
+    System.out.println("Loaded " + students.size() + " students from semester " + semester);
     }
 
     /**
@@ -294,7 +294,7 @@ private JPanel createTopPanel() {
         panel.add(feeCombo);
 
         // Buttons
-        JButton saveBtn = new JButton("💾 Save");
+        JButton saveBtn = new JButton("Save");
         saveBtn.setBackground(new Color(46, 204, 113));
         saveBtn.setForeground(Color.WHITE);
 

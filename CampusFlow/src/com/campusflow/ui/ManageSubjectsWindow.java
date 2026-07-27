@@ -237,11 +237,11 @@ public class ManageSubjectsWindow extends JFrame {
             boolean success = dao.addSubject(code, name, course, semester, selectedTeacher.getTeacherId());
             
             if (success) {
-                JOptionPane.showMessageDialog(dialog, "✅ Subject added successfully!");
+                JOptionPane.showMessageDialog(dialog, "Subject added successfully!");
                 dialog.dispose();
                 loadSubjects();
             } else {
-                JOptionPane.showMessageDialog(dialog, "❌ Failed to add subject (duplicate code?)");
+                JOptionPane.showMessageDialog(dialog, "Failed to add subject (duplicate code?)");
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(dialog, "Semester must be a number!");

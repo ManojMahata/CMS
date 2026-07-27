@@ -300,4 +300,9 @@ public class TeacherDAO {
         }
     }
 
+    public boolean addTeacher(Teacher manoj, String string) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addTeacher'");
+    }
+
 }
