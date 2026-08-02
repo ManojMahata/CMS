@@ -1,0 +1,19 @@
+CampusFlow - College Management System
+Version: 1.0
+Build Date: July 28, 2026
+Status: Production Ready
+Developer: Manoj Mahata (BCA Student)
+University: Tribhuvan University, Nepal
+
+Features:
+- Teacher Module (Attendance, Marks, Reports)
+- Admin Module (Student/Teacher/Fee Management)
+- Real-time Data Processing
+- Secure Authentication (SHA-256)
+- MySQL Database Backend
+
+System Requirements:
+- Java 11+
+- MySQL 5.7+
+- 4GB RAM
+- 500MB Disk Space

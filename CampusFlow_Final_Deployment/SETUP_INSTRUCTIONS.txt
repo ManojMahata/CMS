@@ -1,0 +1,99 @@
+=====================================================
+CAMPUSFLOW - SETUP INSTRUCTIONS
+=====================================================
+
+STEP 1: SYSTEM REQUIREMENTS CHECK
+- Java 11+ installed? Run: java -version
+- MySQL 5.7+ installed? Run: mysql -u root -p
+- 4GB RAM available?
+- 500MB disk space?
+
+STEP 2: CREATE DATABASE (First time only)
+
+Windows:
+1. Open Command Prompt (Admin)
+2. Navigate to this folder
+3. Run: mysql -u root -p < database\create_database.sql
+4. Enter MySQL root password
+5. Wait for completion
+
+Linux/Mac:
+1. Open Terminal
+2. Navigate to this folder
+3. Run: mysql -u root -p < database/create_database.sql
+4. Enter MySQL root password
+5. Wait for completion
+
+STEP 3: VERIFY DATABASE CREATED
+
+Open MySQL:
+mysql -u root -p
+
+Inside MySQL, run:
+USE campusflow_db;
+SHOW TABLES;  (Should show 9 tables)
+
+Then exit: quit
+
+STEP 4: START APPLICATION
+
+Windows:
+- Double-click: RUN_APP.bat
+
+Linux/Mac:
+- Open Terminal in this folder
+- Run: ./run_app.sh
+
+STEP 5: LOGIN
+
+Default Credentials:
+- Username: admin
+- Password: admin123
+
+IMPORTANT: Change password immediately after login!
+
+STEP 6: FIRST USE CHECKLIST
+
+After login as admin:
+[ ] Verify database tables exist
+[ ] Change admin password
+[ ] Create new teacher accounts
+[ ] Create student accounts
+[ ] Assign subjects to teachers
+[ ] Test Mark Attendance feature
+[ ] Test Enter Marks feature
+[ ] Test Manage Students feature
+
+TROUBLESHOOTING:
+
+Problem: "Cannot connect to database"
+Solution: 
+- Check MySQL is running
+- Verify database created
+- Check username/password
+
+Problem: "Cannot find Java"
+Solution:
+- Install Java 11+
+- Add Java to PATH
+- Restart terminal
+
+Problem: "Port 3306 in use"
+Solution:
+- Change MySQL port in my.cnf
+- Or close other applications
+
+SUPPORT:
+
+If issues persist:
+1. Check terminal output for error messages
+2. Verify MySQL running: mysql -u root -p
+3. Verify database created: mysql -u root -p -e "USE campusflow_db; SHOW TABLES;"
+4. Check Java installed: java -version
+5. Review this setup guide
+
+=====================================================
+Installation Date: _______________
+Installed By: _______________
+System: _______________
+=====================================================
